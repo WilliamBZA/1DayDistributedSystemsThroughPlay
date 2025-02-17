@@ -16,7 +16,7 @@ We'll start with a working minimal implementation of an escape room with microse
 - IoT basics, reading and writing
 - Triggering things through REST
 - Where REST breaks down
-- Introducing messaging via RabbitMQ
+- Introducing messaging via Azure
 - Routing messages
 - Dealing with failures
 - Delayed delivery
@@ -24,3 +24,12 @@ We'll start with a working minimal implementation of an escape room with microse
 - Let's escape! A full play through of our escape room
 
 This will give attendees an overview of the basic patterns of distributed systems enabling attendees to see how to transition their current systems to a better distributed systems architecture. Attendees will also get a basic introduction to IoT devices.
+
+### What should you bring?
+
+This is a Bring Your Own Device (BYOD) workshop. Therefore, attendees are required to bring their own device with the necessary software already installed:
+
+Either:
+
+* Visual Studio 2022 with the [Nanoframework extension installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html)
+* VS Code with [Nanoframework add-on installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-vs-code.html)
