@@ -31,5 +31,10 @@ This is a Bring Your Own Device (BYOD) workshop. Therefore, attendees are requir
 
 Either:
 
-* Visual Studio 2022 with the [Nanoframework extension installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html)
+* Recommended: Visual Studio 2022 with the [Nanoframework extension installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html)
 * VS Code with [Nanoframework add-on installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-vs-code.html)
+
+NOTES:
+
+* The NanoFramework does not work with Jetbrains Rider.
+* The NanoFramework extenions will not work on 32 bits OSs or ARM platforms.
