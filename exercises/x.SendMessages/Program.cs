@@ -47,8 +47,8 @@ namespace _0.SendMessages
 
             var connection = new Connection(new Address("amqps://RootManageSharedAccessKey:qKXZgqfP3MS6JLAIm2IETr%2BergKTYJDwO%2BASbBjbfWQ%3D@sbroutingtest.servicebus.windows.net:5671/?verify=verify_none"));
 
-            using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController) }))
-            using (WebServer httpsServer = new WebServer(443, HttpProtocol.Https, new Type[] { typeof(HomeController) }))
+            using (var server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController) }))
+            using (var httpsServer = new WebServer(443, HttpProtocol.Https, new Type[] { typeof(HomeController) }))
             {
                 server.CommandReceived += ServerCommandReceived;
                 server.Start();

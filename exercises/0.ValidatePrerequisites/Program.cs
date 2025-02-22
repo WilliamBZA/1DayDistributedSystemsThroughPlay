@@ -44,7 +44,8 @@ namespace _0.ValidatePrerequisites
             var ipaddres = IPGlobalProperties.GetIPAddress();
             Debug.WriteLine($"Connected with IP Address: {ipaddres.ToString()}");
 
-            using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController) }))
+            using (var server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController) }))
+            using (var httpsServer = new WebServer(443, HttpProtocol.Https, new Type[] { typeof(HomeController) }))
             {
                 server.CommandReceived += ServerCommandReceived;
                 server.Start();
