@@ -7,8 +7,7 @@ namespace _0.Deployment
 {
     public class HomeController
     {
-        [Route("*")]
-        [CaseSensitive]
+        [Route("api/testroute")]
         [Method("GET")]
         public void RoutePostTest(WebServerEventArgs e)
         {

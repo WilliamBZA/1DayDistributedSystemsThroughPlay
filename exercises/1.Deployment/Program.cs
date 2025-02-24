@@ -15,7 +15,6 @@ namespace _0.Deployment
     {
         private static string MySsid = "";
         private static string MyPassword = "";
-        private const string DirectoryPath = "I:\\wwwRoot\\";
 
         public static void Main()
         {
@@ -44,7 +43,7 @@ namespace _0.Deployment
             var ipaddres = IPGlobalProperties.GetIPAddress();
             Debug.WriteLine($"Connected with IP Address: {ipaddres.ToString()}");
 
-            using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController) }))
+            using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController), typeof(FileController) }))
             {
                 server.CommandReceived += ServerCommandReceived;
                 server.Start();
@@ -74,7 +73,7 @@ namespace _0.Deployment
 
                 Debug.WriteLine($"Request file: '{fileName}'");
 
-                WebServer.SendFileOverHTTP(e.Context.Response, DirectoryPath + fileName);
+                WebServer.SendFileOverHTTP(e.Context.Response, FileController.DirectoryPath + fileName);
                 return;
             }
             catch (IOException)

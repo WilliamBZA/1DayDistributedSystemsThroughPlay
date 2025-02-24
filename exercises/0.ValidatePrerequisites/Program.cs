@@ -15,7 +15,7 @@ namespace _0.ValidatePrerequisites
     {
         private static string MySsid = "";
         private static string MyPassword = "";
-        private const string DirectoryPath = "I:\\wwwRoot\\";
+        private const string DirectoryPath = "I:\\wwwroot\\";
 
         public static void Main()
         {

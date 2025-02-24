@@ -14,25 +14,51 @@
 
     <div>
         <div class="container">
-            <h1>Exercise 1:</h1>
-            <h2>Deploy an application 🚢</h2>
+            <div>
+                <h1>Exercise 1:</h1>
+                <h4>Deploy an application</h4>
+            </div>
         </div>
         
-        <div class="container">
-            <ul class="nav nav-tabs" id="exercise-headings" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="vscode-tab" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" type="button" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="visualstudio-tab" data-bs-toggle="tab" data-bs-target="#visualstudio-tab-content" type="button" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">Visual Studio</button>
-                </li>
-            </ul>
-            <div class="tab-content" id="exerciseContent">
-                <div class="tab-pane show active" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="0">
-                    <h1>VS Code</h1>
-                </div>
-                <div class="tab-pane" id="visualstudio-tab-content" role="tabpanel" aria-labelledby="visualstudio-tab" tabindex="0">
-                    <h1>Visual Studio</h1>
+        <div class="container exercisedetails">
+            <div>
+                <ul class="nav nav-tabs" id="exercise-headings" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="vscode-tab" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" type="button" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="visualstudio-tab" data-bs-toggle="tab" data-bs-target="#visualstudio-tab-content" type="button" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">Visual Studio</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="exerciseContent">
+                    <div class="tab-pane show active" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="0">
+                        <div>
+                            There are 4 steps to deploying a NanoFramework application to a controller using the vscode add-on. At a summary, these are:
+                        </div>
+
+                        <div>
+                            <ol>
+                                <li>Build the project</li>
+                                <li>Deploy the project</li>
+                                <li>Add all Content Files to a deploy.json</li>
+                                <li>Deploy the files</li>
+                            </ol>
+                        </div>
+
+                        <div>
+                            <img src="img/build.png" />
+                            <img src="img/selectsolution.png" />
+                            <img src="img/buildlog.png" />
+                            <img src="img/deployproject.png" />
+                            <img src="img/selectsolution.png" />
+                            <img src="img/comtarget.png" />
+                            <img src="img/deploylog.png" />
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="visualstudio-tab-content" role="tabpanel" aria-labelledby="visualstudio-tab" tabindex="0">
+                        <h1>Visual Studio</h1>
+                    </div>
                 </div>
             </div>
         </div>
