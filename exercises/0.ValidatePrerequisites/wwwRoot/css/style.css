@@ -2,12 +2,42 @@
     text-align: left;
 }
 
-@media (min-width: 1000px) {
-    .exercisedetails {
-        margin-top: 3em;
-    }
+.tab-content {
+    margin: 2em;
+    padding-bottom: 4em;
 }
 
-.tab-content {
-    margin: 1em;
+.container.heading {
+    padding: 1em;
+}
+
+.exercisedetails img {
+  padding: 1em;
+  border: 3px dashed var(--bs-body-color);
+  border-radius: 1px;
+  margin: 2em;
+  width: 1000px;
+}
+
+body {
+    background-color: var(--bs-gray-400);
+}
+
+body > div > div {
+    background-color: var(--bs-body-bg);
+}
+
+h3.breadcrumb {
+    margin: 1em 0;
+    font-size: x-large;
+}
+
+pre {
+    background-color: var(--bs-gray-400);
+    padding: 1em;
+    color: var(--bs-emphasis-color);
+}
+
+.nav-tabs .nav-link {
+    font-size: 2em;
 }

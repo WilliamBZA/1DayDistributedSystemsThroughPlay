@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Escape room fun!</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div>
+        <div class="container">
+            <div>
+                <h1>Files:</h1>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div>
+                <form id="fileform" method="post" action="/api/files" enctype="multipart/form-data">
+                    <div>
+                        <label for="file">File(s) to upload</label>
+                        <input type="file" id="file" name="file" multiple />
+                    </div>
+                    
+                    <div>
+                        <label for="subdir">Uplaod file in subdirectory:</label>
+                        <input type="text" id="subdir" name="subdir" value="" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <form id="deleteForm" method="delete" action="/api/files/deleteallfiles">
+                <button id="deleteAllFilesButton" type="button" class="btn btn-danger">Delete all files on device</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('deleteAllFilesButton').addEventListener('click', () => {
+            var form = document.getElementById('deleteForm');
+
+            return fetch(form.action, {
+                    method: 'DELETE',
+                    body: {}
+                }).then(response => response.json());
+        });
+    </script>
+</body>
+</html>

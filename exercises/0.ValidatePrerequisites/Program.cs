@@ -13,9 +13,8 @@ namespace _0.ValidatePrerequisites
 {
     public class Program
     {
-        private static string MySsid = "";
-        private static string MyPassword = "";
-        private const string DirectoryPath = "I:\\wwwroot\\";
+        private static string MySsid = "dropitlikeaSquat";
+        private static string MyPassword = "DaisyToddAndButt";
 
         public static void Main()
         {
@@ -44,8 +43,7 @@ namespace _0.ValidatePrerequisites
             var ipaddres = IPGlobalProperties.GetIPAddress();
             Debug.WriteLine($"Connected with IP Address: {ipaddres.ToString()}");
 
-            using (var server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController) }))
-            using (var httpsServer = new WebServer(443, HttpProtocol.Https, new Type[] { typeof(HomeController) }))
+            using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController), typeof(FileController) }))
             {
                 server.CommandReceived += ServerCommandReceived;
                 server.Start();
@@ -75,7 +73,7 @@ namespace _0.ValidatePrerequisites
 
                 Debug.WriteLine($"Request file: '{fileName}'");
 
-                WebServer.SendFileOverHTTP(e.Context.Response, DirectoryPath + fileName);
+                WebServer.SendFileOverHTTP(e.Context.Response, FileController.DirectoryPath + fileName, GetContentTypeFromFileName(fileName));
                 return;
             }
             catch (IOException)
@@ -86,6 +84,16 @@ namespace _0.ValidatePrerequisites
             {
                 WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.InternalServerError);
             }
+        }
+
+        private static string GetContentTypeFromFileName(string filename)
+        {
+            if (filename.EndsWith(".js"))
+            {
+                return "text/javascript";
+            }
+
+            return "";
         }
     }
 }

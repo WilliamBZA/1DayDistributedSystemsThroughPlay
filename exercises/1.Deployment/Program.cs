@@ -73,7 +73,7 @@ namespace _0.Deployment
 
                 Debug.WriteLine($"Request file: '{fileName}'");
 
-                WebServer.SendFileOverHTTP(e.Context.Response, FileController.DirectoryPath + fileName);
+                WebServer.SendFileOverHTTP(e.Context.Response, FileController.DirectoryPath + fileName, GetContentTypeFromFileName(fileName));
                 return;
             }
             catch (IOException)
@@ -84,6 +84,16 @@ namespace _0.Deployment
             {
                 WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.InternalServerError);
             }
+        }
+
+        private static string GetContentTypeFromFileName(string filename)
+        {
+            if (filename.EndsWith(".js"))
+            {
+                return "text/javascript";
+            }
+
+            return "";
         }
     }
 }

@@ -13,7 +13,7 @@
 <body>
 
     <div>
-        <div class="container">
+        <div class="container heading">
             <div>
                 <h1>Exercise 1:</h1>
                 <h4>Deploy an application</h4>
@@ -21,20 +21,23 @@
         </div>
         
         <div class="container exercisedetails">
-            <div>
+            <div class="col-lg-12">
                 <ul class="nav nav-tabs" id="exercise-headings" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="vscode-tab" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" type="button" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
+                        <button class="nav-link active" id="vscode-tab" type="button" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="visualstudio-tab" data-bs-toggle="tab" data-bs-target="#visualstudio-tab-content" type="button" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">Visual Studio</button>
+                        <button class="nav-link" id="visualstudio-tab" type="button" data-bs-toggle="tab" data-bs-target="#visualstudio-tab-content" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">Visual Studio</button>
                     </li>
                 </ul>
                 
                 <div class="tab-content" id="exerciseContent">
                     <div class="tab-pane show active" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="0">
+                        <h3>Deploying with VSCode</h3>
                         <div>
-                            There are 4 steps to deploying a NanoFramework application to a controller using the vscode add-on. At a summary, these are:
+                            There are 4 steps to deploying a NanoFramework application to a micro-controller like an ESP32 (which is what we are using during this workshop)
+                            using the vscode add-on. At a summary, these steps are:
+                            <br/><br/>
                         </div>
 
                         <div>
@@ -45,15 +48,98 @@
                                 <li>Deploy the files</li>
                             </ol>
                         </div>
+                        <hr/>
+
+                        <h3 class="breadcrumb" id="vscode-step1">1. Build the application</h3>
+                        <div>
+                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>nanoFramework: Build Project</code>. Once found, run that command.</div>
+                            <img src="img/build.png" class="text-center" />
+                        </div>
+                        <div>
+                            <div>The build command will present you with a parameter, asking you which solution you would like to build. Select the <code>1.Deployment\Deployment.sln</code> solution file.</div>
+                            <img src="img/selectsolution.png" />
+                        </div>
+                        <div>
+                            <div>The command will now compile the solution for you, getting it ready to deploy. The build log will look something like this:</div>
+                            <img src="img/buildlog.png" />
+
+                            <div>Once complete, your solution will be built. Now you need to deploy it.</div>
+                        </div>
+                        <hr/>
+
+                        <h3 class="breadcrumb" id="vscode-step2">2. Deploy the application</h3>
 
                         <div>
-                            <img src="img/build.png" />
-                            <img src="img/selectsolution.png" />
-                            <img src="img/buildlog.png" />
+                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>nanoFramework: Deploy Project</code>. Once found, run that command.</div>
                             <img src="img/deployproject.png" />
+                        </div>
+                        <div>
+                            <div>The command will ask you for a parameter, asking you for which solution to deploy. Select the <code>1.Deployment\Deployment.sln</code> solution file.</div>
                             <img src="img/selectsolution.png" />
+                            <div>The command will now ask you for a second parameter: which COM port to deploy to. Select the COM port that the device is <a href="findcomport.html">plugged into.</a></div>
                             <img src="img/comtarget.png" />
+                        </div>
+                        <div>
+                            <div>
+                                Your solution will now be deployed to the device. The output should look something like this:
+                            </div>
                             <img src="img/deploylog.png" />
+                        </div>
+                        <div>
+                            <div>
+                                With your solution deployed, you now need to deploy the static files that will be served by the device's web server.
+                            </div>
+                        </div>
+                        <hr/>
+
+                        <h3 class="breadcrumb" id="vscode-step3">3. Add all content files to a deploy.json file</h3>
+
+                        <div>
+                            The json file must have a format similar to the following:
+                            <pre>{
+    "serialport":"COM3",
+    "files": [{
+        "DestinationFilePath": "I:\\filetoread.png",
+        "SourceFilePath": "filetoread.png"
+    }, {
+        "DestinationFilePath": "I:\\smallfiletoread.png",
+        "SourceFilePath": "smallfiletoread.png"
+    }]
+}</pre>
+                            where each file that must be copied to the device has a <code>DestinationFilePath</code> property and a <code>SourceFilePath</code> property.<br/><br/>
+                            The <code>SourceFilePath</code> property represents where the file that must be copied resides on your local disk. This is a path relative to where
+                            the tool that copies the content files will run.
+                            <br/><br/>
+                            The <code>DestinationFilePath</code> property is where the file must reside on the device. Subdirectories are supported.
+                            <br/><br/>
+                            The drive used depends on the type of storage being used. If using the internal device storage, the drive is <code>I:\\</code>.
+                            <ul>
+                                <li><code>I:</code> Internal storage</li>
+                                <li><code>D:</code> SD Card</li>
+                                <li><code>E:</code> USB storage</li>
+                            </ul>
+                        </div>
+                        <hr/>
+
+                        <h3 class="breadcrumb" id="vscode-step4">4. Deploy the content files</h3>
+
+                        <div>
+                            Deploying the content files is done by running a <code>nanoff</code> dotnet tool.
+                            <br/><br/>
+                            Install the nanoff tool by running the command <code>dotnet tool install -g nanoff</code>
+                            <br/><br/>
+                            Once <code>nanoff</code> is installed, you can use it deploy content files by running: <code>nanoff --filedeployment deploy.json</code> where
+                            <code>deploy.json</code> is the json file you made in <a href="#vscode-step3">step 3.</a>
+                            <div>
+                                <img src="img/nanoffdeploy.png" />
+                            </div>>
+
+                            Once the command has completed, your content files will be deployed on the device.
+                        </div>
+
+                        <h3 class="breadcrumb" id="vscode-step5">5. Success!</h3>
+                        <div>
+                            If you managed to deploy everything successfully, you should see a new exercise waiting for you when you refresh this page!
                         </div>
                     </div>
                     <div class="tab-pane" id="visualstudio-tab-content" role="tabpanel" aria-labelledby="visualstudio-tab" tabindex="0">
