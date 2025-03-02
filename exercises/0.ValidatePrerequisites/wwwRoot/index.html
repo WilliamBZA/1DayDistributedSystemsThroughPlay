@@ -24,15 +24,80 @@
             <div class="col-lg-12">
                 <ul class="nav nav-tabs" id="exercise-headings" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="vscode-tab" type="button" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
+                        <button class="nav-link active" id="visualstudio-tab" type="button" data-bs-toggle="tab" data-bs-target="#visualstudio-tab-content" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">Visual Studio</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="visualstudio-tab" type="button" data-bs-toggle="tab" data-bs-target="#visualstudio-tab-content" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">Visual Studio</button>
+                        <button class="nav-link" id="vscode-tab" type="button" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
                     </li>
                 </ul>
                 
                 <div class="tab-content" id="exerciseContent">
-                    <div class="tab-pane show active" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="0">
+                    <div class="tab-pane show active" id="visualstudio-tab-content" role="tabpanel" aria-labelledby="visualstudio-tab" tabindex="0">
+                        <h3>Deploying with Visual Studio</h3>
+
+                        <div>
+                            Deploying a NanoFramework application from Visual Studio is typically easy and involves only a few steps:
+                        </div>
+
+                        <div>
+                            <ol>
+                                <li>Make sure the correct device is selected in the extension</li>
+                                <li>Make sure content files are set to copy</li>
+                                <li>F5 to run the application</li>
+                            </ol>
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step1">1. Make sure the correct device is selected</h3>
+
+                        <div>
+                            The NanoFramework extension for Visual Studio adds a <code>Device Explorer</code> window with lists any compatible ESP32 devices that are connected
+                            to the computer. To open the window, go to <code>View -> Other Windows -> Device Explorer</code>.
+                            <br/><br/>
+                            <img src="img/devicieexplorerwindow.png" />
+                        </div>
+
+                        <div>
+                            Once this window is open, it will list all compatible devices connected to the computer (in this case, there should only be one). Select the
+                            device you wish to flash. In the example below, the device is connected to <code>COM3</code> and is an <code>ESP32_REV0</code> image.
+                            <br/>
+                            <img src="img/deviceselection.png" />
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step2">2. Set content files to Copy Always</h3>
+
+                        <div>
+                            If there are any content files (e.g. html, js, css, or images) that need to be deployed along with the application, their <code>Build Action</code>
+                            must be set to <code>Content</code> and the <code>Copy to Ouput Directory</code> setting must be set to <code>Always</code> or
+                            <code>Copy if newer</code>.
+                            <br/>
+                            <img src="img/buildaction.png" />
+                        </div>
+
+                        <div>
+                            The build action will copy the files to the internal storage of the device, in the same folder path that they are in relative to the Visual Studio
+                            solution. If you wish to change where the files are copied to, you can edit the <code>nfproj</code> file to specify the destination location
+                            for the file you are copying.
+                            <br/>
+                            <img src="img/customlocation.png" />
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step3">3. F5 to run the application</h3>
+
+                        <div>
+                            Your application is now ready to deploy. Hit <kbd>F5</kbd> to deploy and debug your application. The Visual Studio extension will now compile
+                            your application, deploy it to the <a href="#vs-step1">selected device</a>, and start debugging. You can use most Visual Studio debugging tools (e.g.
+                            Breakpoints, Quick Watch, Watches, etc.)
+                            <br/>
+                            <img src="img/debugging.png" />
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step4">4. Success!</h3>
+                        <div>
+                            If you managed to deploy everything successfully, you should see a new exercise waiting for you when you refresh this page!
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="0">
                         <h3>Deploying with VSCode</h3>
                         <div>
                             There are 4 steps to deploying a NanoFramework application to a micro-controller like an ESP32 (which is what we are using during this workshop)
@@ -141,9 +206,6 @@
                         <div>
                             If you managed to deploy everything successfully, you should see a new exercise waiting for you when you refresh this page!
                         </div>
-                    </div>
-                    <div class="tab-pane" id="visualstudio-tab-content" role="tabpanel" aria-labelledby="visualstudio-tab" tabindex="0">
-                        <h1>Visual Studio</h1>
                     </div>
                 </div>
             </div>
