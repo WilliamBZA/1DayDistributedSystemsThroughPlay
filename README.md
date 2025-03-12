@@ -16,7 +16,7 @@ We'll start with a working minimal implementation of an escape room with microse
 - IoT basics, reading and writing
 - Triggering things through REST
 - Where REST breaks down
-- Introducing messaging via Azure
+- Introducing messaging via Azure Service Bus
 - Routing messages
 - Dealing with failures
 - Delayed delivery
@@ -38,3 +38,4 @@ NOTES:
 
 * The NanoFramework does not work with Jetbrains Rider.
 * The NanoFramework extenions will not work on 32 bits OSs or ARM platforms.
+  * If you are bringing an ARM CPU machine, then you will have to have access to a cloud VM to do some parts of the workshop development. The bulk of the workshop will work on ARM CPU devices though.
