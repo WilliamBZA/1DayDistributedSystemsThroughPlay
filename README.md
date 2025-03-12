@@ -2,7 +2,7 @@
 
 Welcome to the ~funhouse~ workshop! This workshop is going to take you through the process of forgetting about building MicroServices, and guide you through to how to make them better Distributed Systems.
 
-We'll start with a working minimal implementation of an escape room with microservice puzzles that follow a typical naive implementation of a "microservice architecture", and see how they fail. From the failures we will see how each of the puzzles can be improved to be made more scalable and fault tolerant. We'll then explore some more advanced distrbuted systems concepts
+We'll start with a working minimal implementation of an escape room with microservice puzzles that follow a typical naive implementation of a "microservice architecture", and see how they fail. From the failures we will see how each of the puzzles can be improved to be made more scalable and fault tolerant. We'll then explore some more advanced distributed systems concepts
 
 ### This workshop is intended for:
 
