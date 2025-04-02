@@ -29,6 +29,9 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="vscode-tab" type="button" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="bonusexercise-tab" type="button" data-bs-toggle="tab" data-bs-target="#bonus-exercise-tab-content" role="tab" aria-controls="bonus-exercise-tab-content" aria-selected="true">Bonus exercises</button>
+                    </li>
                 </ul>
                 
                 <div class="tab-content" id="exerciseContent">
@@ -52,16 +55,14 @@
                         <div>
                             The NanoFramework extension for Visual Studio adds a <code>Device Explorer</code> window with lists any compatible ESP32 devices that are connected
                             to the computer. To open the window, go to <code>View -> Other Windows -> Device Explorer</code>.
-                            <br/><br/>
                             <img src="img/devicieexplorerwindow.png" />
                         </div>
 
                         <div>
                             Once this window is open, it will list all compatible devices connected to the computer (in this case, there should only be one). Select the
                             device you wish to flash. In the example below, the device is connected to <code>COM3</code> and is an <code>ESP32_REV0</code> image.
-                            <br/>
-                            <img src="img/deviceselection.png" />
                         </div>
+                        <img src="img/deviceselection.png" />
 
                         <h3 class="breadcrumb" id="vs-step2">2. Set content files to Copy Always</h3>
 
@@ -69,17 +70,15 @@
                             If there are any content files (e.g. html, js, css, or images) that need to be deployed along with the application, their <code>Build Action</code>
                             must be set to <code>Content</code> and the <code>Copy to Ouput Directory</code> setting must be set to <code>Always</code> or
                             <code>Copy if newer</code>.
-                            <br/>
-                            <img src="img/buildaction.png" />
                         </div>
+                        <img src="img/buildaction.png" />
 
                         <div>
                             The build action will copy the files to the internal storage of the device, in the same folder path that they are in relative to the Visual Studio
                             solution. If you wish to change where the files are copied to, you can edit the <code>nfproj</code> file to specify the destination location
                             for the file you are copying.
-                            <br/>
-                            <img src="img/customlocation.png" />
                         </div>
+                        <img src="img/customlocation.png" />
 
                         <h3 class="breadcrumb" id="vs-step3">3. F5 to run the application</h3>
 
@@ -87,9 +86,8 @@
                             Your application is now ready to deploy. Hit <kbd>F5</kbd> to deploy and debug your application. The Visual Studio extension will now compile
                             your application, deploy it to the <a href="#vs-step1">selected device</a>, and start debugging. You can use most Visual Studio debugging tools (e.g.
                             Breakpoints, Quick Watch, Watches, etc.)
-                            <br/>
-                            <img src="img/debugging.png" />
                         </div>
+                        <img src="img/debugging.png" />
 
                         <h3 class="breadcrumb" id="vs-step4">4. Success!</h3>
                         <div>
@@ -97,12 +95,11 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="0">
+                    <div class="tab-pane" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="1">
                         <h3>Deploying with VSCode</h3>
                         <div>
-                            There are 4 steps to deploying a NanoFramework application to a micro-controller like an ESP32 (which is what we are using during this workshop)
+                            There are 4 steps to deploying a NanoFramework application to a microcontroller like an ESP32 (which is what we are using during this workshop)
                             using the vscode add-on. At a summary, these steps are:
-                            <br/><br/>
                         </div>
 
                         <div>
@@ -117,9 +114,10 @@
 
                         <h3 class="breadcrumb" id="vscode-step1">1. Build the application</h3>
                         <div>
-                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>nanoFramework: Build Project</code>. Once found, run that command.</div>
+                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>NanoFramework: Build Project</code>. Once found, run that command.</div>
                             <img src="img/build.png" class="text-center" />
                         </div>
+                        
                         <div>
                             <div>The build command will present you with a parameter, asking you which solution you would like to build. Select the <code>1.Deployment\Deployment.sln</code> solution file.</div>
                             <img src="img/selectsolution.png" />
@@ -135,7 +133,7 @@
                         <h3 class="breadcrumb" id="vscode-step2">2. Deploy the application</h3>
 
                         <div>
-                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>nanoFramework: Deploy Project</code>. Once found, run that command.</div>
+                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>NanoFramework: Deploy Project</code>. Once found, run that command.</div>
                             <img src="img/deployproject.png" />
                         </div>
                         <div>
@@ -171,13 +169,17 @@
         "SourceFilePath": "smallfiletoread.png"
     }]
 }</pre>
-                            where each file that must be copied to the device has a <code>DestinationFilePath</code> property and a <code>SourceFilePath</code> property.<br/><br/>
-                            The <code>SourceFilePath</code> property represents where the file that must be copied resides on your local disk. This is a path relative to where
-                            the tool that copies the content files will run.
-                            <br/><br/>
-                            The <code>DestinationFilePath</code> property is where the file must reside on the device. Subdirectories are supported.
-                            <br/><br/>
-                            The drive used depends on the type of storage being used. If using the internal device storage, the drive is <code>I:\\</code>.
+                            <div>
+                                where each file that must be copied to the device has a <code>DestinationFilePath</code> property and a <code>SourceFilePath</code> property.<br/><br/>
+                                The <code>SourceFilePath</code> property represents where the file that must be copied resides on your local disk. This is a path relative to where
+                                the tool that copies the content files will run.
+                            </div>
+                            <div>
+                                The <code>DestinationFilePath</code> property is where the file must reside on the device. Subdirectories are supported.
+                            </div>
+                            <div>
+                                The drive used depends on the type of storage being used. If using the internal device storage, the drive is <code>I:\\</code>.
+                            </div>
                             <ul>
                                 <li><code>I:</code> Internal storage</li>
                                 <li><code>D:</code> SD Card</li>
@@ -189,23 +191,81 @@
                         <h3 class="breadcrumb" id="vscode-step4">4. Deploy the content files</h3>
 
                         <div>
-                            Deploying the content files is done by running a <code>nanoff</code> dotnet tool.
-                            <br/><br/>
-                            Install the nanoff tool by running the command <code>dotnet tool install -g nanoff</code>
-                            <br/><br/>
-                            Once <code>nanoff</code> is installed, you can use it deploy content files by running: <code>nanoff --filedeployment deploy.json</code> where
-                            <code>deploy.json</code> is the json file you made in <a href="#vscode-step3">step 3.</a>
                             <div>
-                                <img src="img/nanoffdeploy.png" />
-                            </div>>
+                                Deploying the content files is done by running a <code>nanoff</code> dotnet tool.
+                            </div>
+                            <div>
+                                Install the nanoff tool by running the command <code>dotnet tool install -g nanoff</code>
+                            </div>
+                            <div>
+                                Once <code>nanoff</code> is installed, you can use it deploy content files by running: <code>nanoff --filedeployment deploy.json</code> where
+                                <code>deploy.json</code> is the json file you made in <a href="#vscode-step3">step 3.</a>
+                            </div>
+                            <img src="img/nanoffdeploy.png" />
 
-                            Once the command has completed, your content files will be deployed on the device.
+                            <div>
+                                Once the command has completed, your content files will be deployed on the device.
+                            </div>
                         </div>
 
                         <h3 class="breadcrumb" id="vscode-step5">5. Success!</h3>
                         <div>
                             If you managed to deploy everything successfully, you should see a new exercise waiting for you when you refresh this page!
                         </div>
+                    </div>
+
+                    <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
+                        <h3>Bonus round!</h3>
+
+                        <div>
+                            Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
+                        </div>
+
+                        <h3 class="breadcrumb">1. Add a new HTML page and make sure you can navigate to it</h3>
+                        <div>
+                            Add a new HTML page called <code>server.html</code>. The html page should be valid HTML and should contain a section that contains the
+                            text <code>%%NUMBEROFREQUESTS%%</code>. We will be replacing this value with a value that comes from the devce in the next bonus exercise.
+                        </div>
+                        <div>
+                            Once you have added this new page and deployed it, you should be fairly confident in your understanding of how to add content files
+                            using NanoFramework.
+                        </div>
+
+                        <h3 class="breadcrumb">2. Modify the CSharp code to allow replacing tokens within the HTML with values from the device</h3>
+                        <div>
+                            The <code>program.cs</code> file is where the <code>WebServer</code> class is instantiated. It is this class that handles the HTTP
+                            requests.
+                        </div>
+                        <div>
+                            The next bonus exercise is to change the code that serves the static content files to replace the token from the previous example
+                            (<code>%%NUMBEROFREQUESTS%%</code>) with a variable from the server.
+                        </div>
+                        <div>
+                            Ther server should now keep a running total of the number of files it has served. When the <code>server.html</code> is requested, the server
+                            must replace the <code>%%NUMBEROFREQUESTS%%</code> token with that running total. The value does not need to update dynamically, but when
+                            then page is refreshed the most up-to-date value should be displayed.
+                        </div>
+
+                        <h3 class="breadcrumb">3. Profile the performance of serving static content files</h3>
+                        <div>
+                            For the last bonus exercise, see if you can come up with a way to measure the performance of the server when serving static content.
+                        </div>
+                        <div>
+                            See if you can find rough numbers for:
+                        </div>
+                        <div>
+                            <ul>
+                                <li>Number of requests that can be handled concurrently</li>
+                                <li>Failures per 1000 requests</li>
+                                <li>Mean kbps</li>
+                                <li>Does the size of the content files impact the results?</li>
+                                <li>How would you add caching to the webserver?</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="exercise2.html">Go to Exercise 2</a>
                     </div>
                 </div>
             </div>

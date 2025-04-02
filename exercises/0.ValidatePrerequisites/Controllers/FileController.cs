@@ -4,12 +4,16 @@ using System.Net;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
+using nanoFramework.System.IO.FileSystem;
+using System;
 
 namespace _0.ValidatePrerequisites
 {
     public class FileController
     {
-        public const string DirectoryPath = "I:\\";
+        public static SDCard fileSystem = new SDCard();
+
+        public const string DirectoryPath = "D:\\";
 
         [Route("api/files")]
         [Method("GET")]
@@ -31,7 +35,7 @@ namespace _0.ValidatePrerequisites
                 Directory.Delete(dir, true);
             }
 
-            var files = Directory.GetFiles("I:\\");
+            var files = Directory.GetFiles("D:\\");
             foreach (var file in files)
             {
                 File.Delete(file);
@@ -60,6 +64,7 @@ namespace _0.ValidatePrerequisites
         [Method("POST")]
         public void AddFile(WebServerEventArgs e)
         {
+            /*
             var filename = "I:\\text.txt";//GetHeaderValue(e.Context.Request.Headers, "filename");
             if (filename.Length == 0)
             {
@@ -88,6 +93,8 @@ namespace _0.ValidatePrerequisites
                 file.Close();
             }
 
+            */
+
             //var data = UTF8Encoding.UTF8.GetString(body, 0, body.Length);
             //Debug.WriteLine(data);
 
@@ -95,33 +102,32 @@ namespace _0.ValidatePrerequisites
             //Debug.WriteLine($"Uploading file to '{fullPath}'");
 
             //File.WriteAllBytes(fullPath, body);
-            
 
 
-            /*
-            var form = e.Context.Request.ReadForm();
-            var files = form.Files;
 
-            var subDirectory = "";
-            foreach (var formParam in form.Parameters)
-            {
-                if (formParam.Name == "subdir")
-                {
-                    subDirectory = formParam.Data;
-                }
-            }
 
-            foreach (var file in files)
-            {
-                string fullPath = $"{DirectoryPath}\\{(subDirectory.Length > 0 ? subDirectory + "\\" : "")}{file.FileName}";
-                Debug.WriteLine($"Uploading file to '{fullPath}'");
+            var form = e.Context.Request.StreamFilePartsToStorage("I:\\");
+            //var files = form.Files;
 
-                using (var writeFile = File.Create(fullPath))
-                {
-                    file.Data.CopyTo(writeFile);
-                }
-            }
-            */
+            //var subDirectory = "";
+            //foreach (var formParam in form.Parameters)
+            //{
+            //    if (formParam.Name == "subdir")
+            //    {
+            //        subDirectory = formParam.Data;
+            //    }
+            //}
+
+            //foreach (var file in files)
+            //{
+            //    string fullPath = $"{DirectoryPath}\\{(subDirectory.Length > 0 ? subDirectory + "\\" : "")}{file.FileName}";
+            //    Debug.WriteLine($"Uploading file to '{fullPath}'");
+
+            //    using (var writeFile = File.Create(fullPath))
+            //    {
+            //        file.Data.CopyTo(writeFile);
+            //    }
+            //}
 
             WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.Accepted);
         }
@@ -198,6 +204,23 @@ namespace _0.ValidatePrerequisites
             }
 
             return fileResult + subDirResult;
+        }
+
+        public static bool MountSDCard()
+        {
+            try
+            {
+                fileSystem.Mount();
+                Debug.WriteLine("Card Mounted");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Card failed to mount : {ex.Message}");
+                Debug.WriteLine($"IsMounted {fileSystem.IsMounted}");
+            }
+
+            return false;
         }
     }
 }

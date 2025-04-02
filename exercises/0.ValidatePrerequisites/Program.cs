@@ -43,6 +43,9 @@ namespace _0.ValidatePrerequisites
             var ipaddres = IPGlobalProperties.GetIPAddress();
             Debug.WriteLine($"Connected with IP Address: {ipaddres.ToString()}");
 
+            // Prepare filesystem
+            FileController.MountSDCard();
+
             using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(HomeController), typeof(FileController) }))
             {
                 server.CommandReceived += ServerCommandReceived;
@@ -95,5 +98,7 @@ namespace _0.ValidatePrerequisites
 
             return "";
         }
+
+
     }
 }

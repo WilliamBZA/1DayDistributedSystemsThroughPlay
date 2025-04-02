@@ -21,18 +21,18 @@
         
         <div class="container">
             <div>
-                <form id="fileform" method="post" action="/api/files" enctype="multipart/form-data">
+                <form id="fileform" method="post" action="http://192.168.88.242/api/files" enctype="multipart/form-data">
                     <div>
                         <label for="file">File(s) to upload</label>
                         <input type="file" id="file" name="file" multiple />
                     </div>
                     
                     <div>
-                        <label for="subdir">Uplaod file in subdirectory:</label>
-                        <input type="text" id="subdir" name="subdir" value="" />
+                        <label for="subdir">Upload file in subdirectory:</label>
+                        <input type="text" id="subdir" value="" />
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button id="uploadFilesButton" type="button" class="btn btn-primary">Upload</button>
                 </form>
             </div>
         </div>
@@ -53,6 +53,17 @@
                     method: 'DELETE',
                     body: {}
                 }).then(response => response.json());
+        });
+
+        document.getElementById('uploadFilesButton').addEventListener('click', () => {
+            var form = document.getElementById('fileform');
+            var subdir = document.getElementById('subdir');
+
+            if (form.action.indexOf('?') == -1) {
+                form.action = form.action + '?subdir=' + subdir.value;
+            }
+
+            form.submit();
         });
     </script>
 </body>

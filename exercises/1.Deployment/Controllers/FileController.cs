@@ -3,18 +3,20 @@ using System.Collections;
 using System.Net;
 using System.Text;
 using System.IO;
+using System;
+using System.Diagnostics;
 
-namespace _0.Deployment
+namespace Deployment
 {
     public class FileController
     {
-        public const string DirectoryPath = "I:\\wwwroot\\";
+        public const string DirectoryPath = "D:\\";
 
         [Route("api/files")]
         [Method("GET")]
         public void GetFiles(WebServerEventArgs e)
         {
-            string output = $"{{\"files\": [{ GetFilesInDirectoryIncludingSubdirectories("I:\\") }]}}";
+            string output = $"{{\"files\": [{ GetFilesInDirectoryIncludingSubdirectories(DirectoryPath) }]}}";
             
             e.Context.Response.ContentType = "application/json";
             WebServer.OutPutStream(e.Context.Response, output);
@@ -24,13 +26,13 @@ namespace _0.Deployment
         [Method("DELETE")]
         public void DeleteAllFiles(WebServerEventArgs e)
         {
-            var directories = Directory.GetDirectories("I:\\");
+            var directories = Directory.GetDirectories(DirectoryPath);
             foreach (var dir in directories)
             {
                 Directory.Delete(dir, true);
             }
 
-            var files = Directory.GetFiles("I:\\");
+            var files = Directory.GetFiles(DirectoryPath);
             foreach (var file in files)
             {
                 File.Delete(file);
@@ -53,6 +55,26 @@ namespace _0.Deployment
             }
 
             WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.BadRequest);
+        }
+
+        [Route("api/files")]
+        [Method("POST")]
+        public void AddFile(WebServerEventArgs e)
+        {
+            var subDirectory = "";
+            if (e.Context.Request.RawUrl.ToLower().IndexOf("?") >= 0)
+            {
+                var parameters = WebServer.DecodeParam(e.Context.Request.RawUrl);
+                foreach (var param in parameters)
+                {
+                    if (param.Name.ToLower() == "subdir")
+                    {
+                        subDirectory = param.Value;
+                    }
+                }
+            }
+
+            WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.Accepted);
         }
 
         private string GetFilesInDirectoryIncludingSubdirectories(string directory)

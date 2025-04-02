@@ -1,4 +1,8 @@
-﻿h1 {
+﻿:root {
+    --bs-body-color: #000;
+}
+
+h1 {
     text-align: left;
 }
 
@@ -41,4 +45,21 @@ pre {
 
 .nav-tabs .nav-link {
     font-size: 2em;
+}
+
+.tab-pane > div,
+.tab-pane > div > div {
+    padding-bottom: 1em;
+}
+
+.red {
+    color: red;
+}
+
+.blue {
+    color: blue;
+}
+
+.green {
+    color: olivedrab;
 }
