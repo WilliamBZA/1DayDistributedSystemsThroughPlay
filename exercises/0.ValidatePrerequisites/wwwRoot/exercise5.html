@@ -73,10 +73,60 @@
 
                         <h3 class="breadcrumb" id="vs-step1">1. Create a second Console Application</h3>
                         <div>
+                            Since we previously sent a message to a single queue, we now want to introduce a second application that will also receive the same message. To do this, follow these steps:
+                        </div>
+
+                        <div>
+                            <ol>
+                                <li>In the Azure Portal, navigate to the Service Bus Resource and click on the <code>+ Queue</code> link at the top of the page.</li>
+                                <li>Come up with a name for your console application's queue (maybe a variation of your device queue that you created in exercise 4? I called mine <code>ThedriveinVirtualDevice</code>)</li>
+                                <li>Create a new Console Application (e.g., <code>MessageReceiver2</code>).</li>
+                                <li>Install the Azure.Messaging.ServiceBus NuGet package</li>
+                                <li>Update Program.cs to receive messages from the queue you just created. Copy the message receiver logic from your first Console Application, but update it to connect to the second queue instead.</li>
+                            </ol>
+                        </div>
+
+                        <div>
+                            At this point, both Console Applications can receive messages, but they are still independent. In the next steps, we will modify this so they
+                            both receive the messages when the LEDs are toggled.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Send the Message to both queues</h3>
                         <div>
+                            Now, update your message sender so it sends the same message to both queues. Modify your Sender's (the console application) <code>Program.cs</code> file:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">static</span>&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#066555;">Task</span>&nbsp;<span style="color:#74531f;">Main</span>(<span style="color:blue;">string</span>[]&nbsp;<span style="color:#1f377f;">args</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">await</span>&nbsp;<span style="color:blue;">using</span>&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">client</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusClient</span>(<span style="color:#a31515;">&quot;ConnectionStringGoesHere&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;sender&nbsp;for&nbsp;the&nbsp;first&nbsp;queue,&nbsp;i.e.&nbsp;the&nbsp;device&nbsp;queue</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">senderToNanoFramework</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;sender&nbsp;for&nbsp;second&nbsp;queue,&nbsp;i.e.&nbsp;the&nbsp;second&nbsp;console&nbsp;application&nbsp;you&nbsp;just&nbsp;created</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">senderToConsoleApp</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinvirtualdevice&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;a&nbsp;message</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">toggleMessage</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ToggleLEDs</span>
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ToggleSource&nbsp;=&nbsp;<span style="color:#a31515;">&quot;Console&nbsp;Application&quot;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">string</span>&nbsp;<span style="color:#1f377f;">jsonMessage</span>&nbsp;=&nbsp;<span style="color:#066555;">JsonSerializer</span>.<span style="color:#74531f;">Serialize</span>(<span style="color:#1f377f;">toggleMessage</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">message</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">jsonMessage</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ContentType&nbsp;=&nbsp;<span style="color:#a31515;">&quot;application/json&quot;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;};
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Sending&nbsp;message&nbsp;to&nbsp;both&nbsp;queues...&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Send&nbsp;message&nbsp;to&nbsp;both&nbsp;queues&nbsp;separately</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">senderToNanoFramework</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:#1f377f;">message</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">senderToConsoleApp</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">message</span>.Body));
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Message&nbsp;sent&nbsp;to&nbsp;both&nbsp;queues!&quot;</span>);
+}
+</pre>
                         </div>
 
                         <div>
@@ -133,20 +183,104 @@
                                 <li>Open the Azure Portal and find the Service Bus Resource we've been using</li>
                                 <li>Navigate to the Topics section and click + Topic at the top of the page</li>
                                 <li>Choose a name for your topic (e.g., <code>TeamNameLedToggleTopic</code>) and click Create.</li>
-                                <li>Once the topic is created, go to the Subscriptions tab and click + Subscription</li>
-                                <li>Give your subscription a name (e.g., TeamNameLedToggleSubscription) and click Create.</li>
                             </ol>
                         </div>
                         <div>
-                            You now have a topic and a subscription ready to use!
+                            You now have a topic ready to use, and 2 queues ready to receive messages from that topic! We now need to bind those queues to that topic using subscriptions.
+                        </div>
+                        <div>
+                            So let's bind the queues to that topic...
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step4">4. Bind both queues to the Topic</h3>
                         <div>
+                            Now that we've created a <strong>Topic</strong>, we want both of our queues to receive messages from it. Instead of sending messages directly to the queues,
+                            we will bind them as <strong>subscriptions</strong> to the topic. This way, any message sent to the <strong>Topic</strong> will be automatically forwarded to both queues.
+                        </div>
+                        <div>
+                            To bind the queues to the subscription, do the following steps:
+                        </div>
+                        <div>
+                            <ol>
+                                <li>Navigate to the Azure Portal page for the topic that you just created in step 3</li>
+                                <li>Click <code>+Subscription</code> button at the top of the screen</li>
+                                <li>
+                                    Create the first subscription:
+                                    <ol>
+                                        <li><strong>Subscription Name:</strong> <code>Thedriveintoggleledssubscription</code></li>
+                                        <li>Check the <code>Forward messages to queue/topic</code> checkbox</li>
+                                        <li><strong>Forward To:</strong> Select the queue you created for your NanoFramework device. (In my case, it's <code>thedrivein</code>)</li>
+                                        <li>Click <strong>Create</strong></li>
+                                    </ol>
+                                </li>
+                                <li>
+                                    Create the second subscription:
+                                    <ol>
+                                        <li><strong>Subscription Name:</strong> <code>Thedriveinconsoleapptoggleledssubscription</code></li>
+                                        <li>Check the <code>Forward messages to queue/topic</code> checkbox</li>
+                                        <li><strong>Forward To:</strong> Select the queue you created for your NanoFramework device.</li>
+                                        <li>Click <strong>Create</strong></li>
+                                    </ol>
+                                </li>
+                                <li>Verify that both queues are now listed under Subscriptions for the topic.</li>
+                            </ol>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. Send the message to the Topic only</h3>
                         <div>
+                            Now that we've set up <strong>queue bindings</strong>, our sender should <strong>only send messages to the Topic</strong>, and the queues will receive them automatically.
+                        </div>
+
+                        <div>
+                            Change your sender code to look like this:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">static</span>&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#066555;">Task</span>&nbsp;<span style="color:#74531f;">Main</span>(<span style="color:blue;">string</span>[]&nbsp;<span style="color:#1f377f;">args</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">await</span>&nbsp;<span style="color:blue;">using</span>&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">client</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusClient</span>(<span style="color:#a31515;">&quot;ConnectionStringGoesHere&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;sender&nbsp;for&nbsp;the&nbsp;topic</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Use&nbsp;your&nbsp;team&#39;s&nbsp;topic&nbsp;as&nbsp;the&nbsp;name</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">topicSender</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinteamnameledtoggletopic&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;a&nbsp;message</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">toggleMessage</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ToggleLEDs</span>
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ToggleSource&nbsp;=&nbsp;<span style="color:#a31515;">&quot;Console&nbsp;Application&quot;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">string</span>&nbsp;<span style="color:#1f377f;">jsonMessage</span>&nbsp;=&nbsp;<span style="color:#066555;">JsonSerializer</span>.<span style="color:#74531f;">Serialize</span>(<span style="color:#1f377f;">toggleMessage</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">message</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">jsonMessage</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ContentType&nbsp;=&nbsp;<span style="color:#a31515;">&quot;application/json&quot;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;};
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Sending&nbsp;message&nbsp;to&nbsp;topic...&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Send&nbsp;message&nbsp;to&nbsp;the&nbsp;topic</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">topicSender</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">message</span>.Body));
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Message&nbsp;sent&nbsp;to&nbsp;the&nbsp;topic!&quot;</span>);
+}
+</pre>
+                        </div>
+
+                        <div>
+                            👏 Well done! You've set up subscriptions so that a single send results in both queues receiving the same message. This has a few powerful benefits:
+                        </div>
+                        <div>
+                            <ul>
+                                <li>
+                                    <strong>Atomicity</strong>. A single <strong>Send</strong> will result in both queues receiving the same message. There is no chance that
+                                    one queue will receive the message and not the other. This makes it so that our send operations won't ever be the source of an inconsistent state.
+                                </li>
+                                <li>
+                                    <strong>Maintainability</strong>. We can add future subscribers without making any code changes. With a Topic, you can simply add a new subscription in Azure without modifying the sender.
+                                </li>
+                                <li>
+                                    <strong>Decoupling</strong>. The sender doesn't know anything about who is going to receive the message. There can be no coupling from the sender to the recipients.
+                                </li>
+                            </ul>
                         </div>
                     </div>
 
@@ -157,12 +291,28 @@
                             Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
                         </div>
 
-                        <h3 class="breadcrumb">1. What happens if only one of the Console Applications is running?</h3>
+                        <h3 class="breadcrumb">1. What happens if only the NanoFramework application is running?</h3>
                         <div>
+                            Stop the console application receiver and send messages from the sender.
+                        </div>
+                        <div>
+                            <ul>
+                                <li>Are the messages that should go to the console application receiver lost?</li>
+                                <li>Do the messages remain in the topic somewhere?</li>
+                            </ul>
                         </div>
 
-                        <h3 class="breadcrumb">2. What happens when only one of the Console Applications throws and exception?</h3>
+                        <h3 class="breadcrumb">2. What happens when one of the applications throws an exception?</h3>
                         <div>
+                            Modify one of the subscriber applications to throw an exception when processing a message.
+                        </div>
+                        <div>
+                            What happens to that message?
+                        </div>
+
+                        <h3 class="breadcrumb">3. What is the impact of <strong>Competing Consumers</strong>?</h3>
+                        <div>
+                            Run multiple instances of the Console Application listener and observe the impact. Do both instances get a copy of the messages? What if one of the instances throws an exception?
                         </div>
                     </div>
                     <div>
