@@ -38,25 +38,179 @@
                 <div class="tab-content" id="exerciseContent">
                     <div class="tab-pane show active" id="gpio-tab-content" role="tabpanel" aria-labelledby="gpio-tab" tabindex="0">
                         <div>
+                            By now, you've got a solid Azure Service Bus application sending and receiving messages. But what happens when things
+                            don't go as planned? Welcome to the world of distributed system failures!
+                        </div>
+                        <div>
+                            In this exercise, we'll explore different types of failures and how to handle them. Some failures are temporary - things like
+                            network hiccups that go away on their own. Others need a bit more strategy, like backing off and trying again later. And then there
+                            are the stubborn failures, where messages just refuse to be processed and need to be sent to a dead-letter queue. We'll also talk
+                            about messages that take too long to process, what happens when the system is overloaded, and even discuss some weird failure
+                            cases you might not expect. 👻🧟
+                        </div>
+                        <div>
+                            For this workshop, we will be using <a href="https://www.pollydocs.org/" target="_blank">Polly</a> to build resilience
+                            into our application. Polly exposes functionality that is really useful for our purposes:
+                        </div>
+                        <div>
+                            <ul>
+                                <li>Retries</li>
+                                <li>Delays</li>
+                                <li>Circuit Breaker</li>
+                                <li>Fallback</li>
+                                <li>Timeouts</li>
+                                <li>Rate limiting</li>
+                            </ul>
+                        </div>
+                        <div>
+                            By the end of this exercise your app will be much more resilient, and you'll have a better understanding of how to keep
+                            things running smoothly - even when things go wrong.
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step1">1. </h3>
+                        <h3 class="breadcrumb" id="vs-step1">1. Transient Failures</h3>
+                        <div>
+                            Sometimes, failures are just bad luck. Maybe a brief network issue or a momentary hiccup in the service. Maybe your the service is trying
+                            to update the same database record as another process and a concurrency exception is thrown. Instead of giving up right away, a
+                            simple retry strategy can help.
+                        </div>
+                        <div>
+                            Quite often, simply retrying to do the operation you were doing is enough.
+                        </div>
+                        <div>
+                            This can be achieved by putting the message processing loop inside a <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#8f08c4;">try</span>...<span style="color:#8f08c4;">catch</span></pre>
+                            E.g.
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">//&nbsp;Try&nbsp;to&nbsp;process&nbsp;the&nbsp;message&nbsp;3&nbsp;times</span>
+<span style="color:#8f08c4;">for</span>&nbsp;(<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">i</span>&nbsp;=&nbsp;0;&nbsp;<span style="color:#1f377f;">i</span>&nbsp;&lt;&nbsp;3;&nbsp;<span style="color:#1f377f;">i</span>++)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">try</span>
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#74531f;">HandleMessage</span>(<span style="color:#1f377f;">message</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;If&nbsp;we&nbsp;get&nbsp;here,&nbsp;we&#39;ve&nbsp;processed&nbsp;the&nbsp;message&nbsp;successfully</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;and&nbsp;we&nbsp;can&nbsp;break&nbsp;out&nbsp;of&nbsp;the&nbsp;loop</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">catch</span>&nbsp;(<span style="color:#066555;">Exception</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Log&nbsp;exception,&nbsp;but&nbsp;don&#39;t&nbsp;rethrow</span>
+&nbsp;&nbsp;&nbsp;&nbsp;}
+}
+</pre>
+                        </div>
+                        <div>
+                            While the manual approach works, Polly provides a much cleaner and more configurable way to handle retries.\
+                            Let's implement a simple retry policy with Polly. First, install the Polly NuGet package.
+                        </div>
+                        <div>
+                            With the Nuget package installed, we can build a <strong>retry policy</strong> for processing our messages.
+                        </div>
+                        <div>
+                            Extract your code that handles incoming messages and put it in a method called <code>HandleMessage</code>. From here, we can wrap the call
+                            to this method within a Polly <strong>RetryPolicy</strong>:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">//&nbsp;Create&nbsp;a&nbsp;retry&nbsp;policy&nbsp;that&nbsp;will&nbsp;retry&nbsp;3&nbsp;times&nbsp;immediately</span>
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">retryPolicy</span>&nbsp;=&nbsp;<span style="color:#066555;">Policy</span>
+&nbsp;&nbsp;&nbsp;&nbsp;.<span style="color:#74531f;">Handle</span>&lt;<span style="color:#066555;">Exception</span>&gt;()&nbsp;<span style="color:#066555;">//&nbsp;You&nbsp;can&nbsp;be&nbsp;more&nbsp;specific&nbsp;here,&nbsp;e.g.,&nbsp;Handle&lt;HttpRequestException&gt;()</span>
+&nbsp;&nbsp;&nbsp;&nbsp;.<span style="color:#74531f;">Retry</span>(3,&nbsp;(<span style="color:#1f377f;">exception</span>,&nbsp;<span style="color:#1f377f;">retryCount</span>)&nbsp;=&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Retry&nbsp;</span>{<span style="color:#1f377f;">retryCount</span>}<span style="color:#a31515;">&nbsp;due&nbsp;to&nbsp;</span>{<span style="color:#1f377f;">exception</span>.Message}<span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;});
+
+<span style="color:#1f377f;">retryPolicy</span>.<span style="color:#74531f;">Execute</span>(()&nbsp;=&gt;&nbsp;<span style="color:#74531f;">HandleMessage</span>(<span style="color:#1f377f;">message</span>));
+</pre>
+                        </div>
+                        <div>
+                            This will attempt to process the message 3 times. If the message cannot be processed after 3 attempts, the exception will bubble up.
+                        </div>
+                        <div>
+                            Change your message receiver to use a Polly retry policy that will attempt to process messages 3 times.
+                        </div>
+                        <div>
+                            Test your policy by throwing an exception in your message handler.
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">static</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">HandleMessage</span>(<span style="color:#066555;">ToggleLEDs</span>&nbsp;<span style="color:#1f377f;">message</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Attempting&nbsp;to&nbsp;process&nbsp;the&nbsp;message...&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">throw</span>&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">Exception</span>(<span style="color:#a31515;">&quot;Simulated&nbsp;Failure&quot;</span>);
+}
+</pre>
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step2">2. Temporary, but not exactly transient errors</h3>
+                        <div>
+                            Sometimes errors persist longer than just a moment. In these cases, immediate retries won't help, but waiting a little bit longer might be enough to work.
+                            This can happen for example when a 3rd party service is offline for a bit, or if there are database deadlocks that need another process to release a lock.
+                            If the problem is due to a temporary error, it is possible that waiting for a few seconds before retrying the message could be enough to get the message
+                            to succeed. This is where Polly's <code>WaitAndRetry</code> policy comes in handy.
+                        </div>
+                        <div>
+                            Rather than retrying immediately, we can configure Polly to wait between retries, potentially with an increasing delay (exponential backoff).
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">//&nbsp;Create&nbsp;a&nbsp;policy&nbsp;that&nbsp;will&nbsp;wait&nbsp;between&nbsp;retries&nbsp;with&nbsp;exponential&nbsp;backoff</span>
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">waitAndRetryPolicy</span>&nbsp;=&nbsp;<span style="color:#066555;">Policy</span>
+&nbsp;&nbsp;&nbsp;&nbsp;.<span style="color:#74531f;">Handle</span>&lt;<span style="color:#066555;">Exception</span>&gt;()
+&nbsp;&nbsp;&nbsp;&nbsp;.<span style="color:#74531f;">WaitAndRetry</span>(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">retryCount</span>:&nbsp;3,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">sleepDurationProvider</span>:&nbsp;<span style="color:#1f377f;">retryAttempt</span>&nbsp;=&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">TimeSpan</span>.<span style="color:#74531f;">FromSeconds</span>(<span style="color:#066555;">Math</span>.<span style="color:#74531f;">Pow</span>(2,&nbsp;<span style="color:#1f377f;">retryAttempt</span>)),&nbsp;<span style="color:#066555;">//&nbsp;2,&nbsp;4,&nbsp;8&nbsp;seconds</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">onRetry</span>:&nbsp;(<span style="color:#1f377f;">exception</span>,&nbsp;<span style="color:#1f377f;">timeSpan</span>,&nbsp;<span style="color:#1f377f;">retryCount</span>,&nbsp;<span style="color:#1f377f;">context</span>)&nbsp;=&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Retry&nbsp;</span>{<span style="color:#1f377f;">retryCount</span>}<span style="color:#a31515;">&nbsp;after&nbsp;</span>{<span style="color:#1f377f;">timeSpan</span>.TotalSeconds}<span style="color:#a31515;">s&nbsp;due&nbsp;to&nbsp;</span>{<span style="color:#1f377f;">exception</span>.Message}<span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;);
+
+<span style="color:#1f377f;">waitAndRetryPolicy</span>.<span style="color:#74531f;">Execute</span>(()&nbsp;=&gt;&nbsp;<span style="color:#74531f;">HandleMessage</span>(<span style="color:#1f377f;">message</span>));
+</pre>
+                        </div>
+                        <div>
+                            This will retry your message after a small delay.
+                        </div>
+                        <div>
+                            Your task now is to combine the immediate and the delayed retries.
+                        </div>
+                        <div>
+                            Change your code to retry the message immediately 3 times, and if that fails, then use the <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">WaitAndRetry</span>
+</pre> policy.
+                        </div>
+                        <div>
+                            Test your code with a handler that fails until 5 seconds has elapsed:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">failUntil</span>&nbsp;=&nbsp;<span style="color:#066555;">DateTime</span>.MinValue;
+<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">HandleMessage</span>(<span style="color:#066555;">ToggleLEDs</span>&nbsp;<span style="color:#1f377f;">message</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(<span style="color:#066555;">DateTime</span>.UtcNow&nbsp;<span style="color:#74531f;">&lt;</span>&nbsp;<span style="color:#1f377f;">failUntil</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">throw</span>&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">Exception</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Service&nbsp;temporarily&nbsp;unavailable&nbsp;until&nbsp;</span>{<span style="color:#1f377f;">failUntil</span>}<span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;First&nbsp;failure&nbsp;sets&nbsp;a&nbsp;recovery&nbsp;time&nbsp;in&nbsp;the&nbsp;future</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(<span style="color:#1f377f;">failUntil</span>&nbsp;<span style="color:#74531f;">==</span>&nbsp;<span style="color:#066555;">DateTime</span>.MinValue)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">failUntil</span>&nbsp;=&nbsp;<span style="color:#066555;">DateTime</span>.UtcNow.<span style="color:#74531f;">AddSeconds</span>(5);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">throw</span>&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">Exception</span>(<span style="color:#a31515;">&quot;Service&nbsp;temporarily&nbsp;unavailable&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Message&nbsp;processed&nbsp;successfully&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">failUntil</span>&nbsp;=&nbsp;<span style="color:#066555;">DateTime</span>.MinValue;
+}
+</pre>
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step3">3. Poison messasges</h3>
                         <div>
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step2">2. </h3>
+                        <h3 class="breadcrumb" id="vs-step4">4. Message timeouts</h3>
                         <div>
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step3">3. </h3>
-                        <div>
-                        </div>
-
-                        <h3 class="breadcrumb" id="vs-step4">4. </h3>
-                        <div>
-                        </div>
-
-                        <h3 class="breadcrumb" id="vs-step5">5. </h3>
+                        <h3 class="breadcrumb" id="vs-step5">5. Service overload</h3>
                         <div>
                         </div>
                     </div>

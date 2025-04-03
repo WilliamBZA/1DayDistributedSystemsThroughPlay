@@ -39,7 +39,7 @@
                     <div class="tab-pane show active" id="gpio-tab-content" role="tabpanel" aria-labelledby="gpio-tab" tabindex="0">
                         <div>
                             What we looked at in the previous exercise was how to Send Commands. Commands have specific intent. They are an instruction to do something
-                            specific. Exmaples of commands are:
+                            specific. Examples of commands are:
                         </div>
                         <div>
                             <ul>
@@ -131,7 +131,8 @@
 
                         <div>
                             This is great. We're now able to send the same message to 2 queues - one for our NanoFramework application and one for the second
-                            Console Application. But this feels weird, right? <i>Right...?</i>
+                            Console Application. While this works, it's not ideal for real-world scenarios where multiple receivers need consistency.
+                            And this feels weird, right? <i>Right...?</i>
                         </div>
 
                         <div>
@@ -160,13 +161,31 @@
                         </div>
 
                         <div>
+                            Inconsistent state is problematic for a few reasons. In most business systems, the "state" of the system is typically represented by
+                            some form of data stored in a database of some kind. A message queue is another form of database, except that it onlhy stores commands
+                            and events (or intents and facts). Since we've introduced another database, it becomes a problem if one database is no longer in sync
+                            with another.
+                        </div>
+
+                        <div>
+                            For example, let's assume that we send a message to charge a customer's credit card. If the message handler successfully charges the
+                            customer's credit card, but on the next line of code it throws an exception. In this case, the message will remain in the queue to
+                            be processed by another thread. Except that the customer's credit card has been charged! So if the next thread picks up the message
+                            and processes it, it will double-charge the customer's credit card! 😡
+                        </div>
+
+                        <div>
+                            We'll look at this is more detail in a later section of the workshop.
+                        </div>
+
+                        <div>
                             Imagine if we tried the same approach with accounting software: We send 2 messages - a Debit and a Credit. If only the Debit is successfully
                             sent, then the balance sheet would never balance - the Credit is lost!
                         </div>
 
                         <div>
                             We would like our Send operations to be <strong>Atomic</strong>. We want to publish once, and know that everyone that is interested in the
-                            message that we published will receieve a copy of it.
+                            message that we published will receive a copy of it.
                         </div>
 
                         <div>
