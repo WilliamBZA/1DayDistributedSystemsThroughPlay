@@ -6,7 +6,7 @@ We'll start with a working minimal implementation of an escape room with microse
 
 ### This workshop is intended for:
 
-- Senior developers beginning to take steps into the world of distributed systems
+- Developers beginning to take steps into the world of distributed systems
 - Developers interested in learning IoT basics
 - Anyone that wants to learn how to make their existing microservices more scalable and fault tolerant
 
