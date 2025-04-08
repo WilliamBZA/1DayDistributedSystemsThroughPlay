@@ -16,7 +16,7 @@
         <div class="container heading">
             <div>
                 <h1>Exercise 11:</h1>
-                <h4>Helpful patterns</h4>
+                <h4>What's Next: Building Real-World Distributed Systems</h4>
             </div>
         </div>
         
@@ -28,56 +28,118 @@
                             Further learning
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="bonusexercise-tab" type="button" data-bs-toggle="tab" data-bs-target="#bonus-exercise-tab-content" role="tab" aria-controls="bonus-exercise-tab-content" aria-selected="true">
-                            Bonus exercises
-                        </button>
-                    </li>
                 </ul>
                 
                 <div class="tab-content" id="exerciseContent">
                     <div class="tab-pane show active" id="gpio-tab-content" role="tabpanel" aria-labelledby="gpio-tab" tabindex="0">
                         <div>
+                            So, you've made it this far! Nice work! You've learned to send messages, handle failures, manage retries,
+                            and even send messages to the future with scheduling. But distributed systems are like onions (or ogres, if you're into Shrek quotes): they have layers.
+                        </div>
+                        <div>
+                            As you head back to your own systems and start designing more complex architectures, here are some advanced patterns and concepts you'll want to explore.
+                            These aren't all required on day one, but knowing they exist will help you grow toward more resilient, maintainable, and scalable systems.
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step1">1. Outbox</h3>
+                        <h3 class="breadcrumb" id="vs-step1">1. Inbox Pattern</h3>
                         <div>
+                            Sometimes, a service receives the same message more than once. Maybe it's due to retries, or maybe it's from a sender trying
+                            to guarantee delivery. To avoid doing the same work multiple times (like charging a customer twice), the Inbox pattern keeps
+                            track of messages you've already handled.
+                        </div>
+                        <div>
+                            Azure Service Bus guarantees at least once processing. The natural conclusion of this is that there is a chance that a message from Azure
+                            Service Bus could be processed more than once. Having an implementation of the Inbox pattern can help prevent duplicate message processing.
+                        </div>
+                        <div class="note">
+                            📝 Look into: storing processed message IDs for a while.
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step2">2. Inbox</h3>
+                        <h3 class="breadcrumb" id="vs-step2">2. Outbox Pattern</h3>
                         <div>
+                            You've already seen how systems can fail between database writes and message publishing. The Outbox pattern helps solve this by storing
+                            outgoing messages in your primary database as part of the same transaction.
+                        </div>
+                        <div>
+                            Only after your business operation is safely committed do you send the messages out. This keeps state consistent and avoids the dreaded
+                            "but I already updated the record!" bug when the message wasn't sent.
+                        </div>
+                        <div class="note">
+                            📝 Look into: Maintaining a list of messages that have been successfully sent and which message ID triggered them.
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step3">3. Orchestration</h3>
+                        <h3 class="breadcrumb" id="vs-step3">3. Orchestration and Sagas</h3>
                         <div>
+                            What happens when a business process spans multiple services? Like a customer order that needs payment, inventory allocation, and
+                            shipping: all handled by different services?
+                        </div>
+                        <div>
+                            That's where Sagas come in. They're long-running transactions that coordinate multiple steps across services, using messages to
+                            track progress. If something fails midway, a Saga can trigger compensating actions to roll things back.
+                        </div>
+                        <div class="note">
+                            📝 You can implement these yourself using messages and state tracking, or explore tools like NServiceBus, MassTransit, Wolverine, or Akka.NET.
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step4">4. Bridge</h3>
+                        <h3 class="breadcrumb" id="vs-step4">4. Bridge Pattern</h3>
                         <div>
+                            Sometimes, your systems don't speak the same protocol. One service might use Azure Service Bus, another might be on RabbitMQ, or maybe even HTTP.
+                            The Bridge Pattern is a piece of software that listens in one place and republishes messages somewhere else - acting as a translator or a connector.
+                        </div>
+                        <div>
+                            This is great for migrating systems, building hybrid clouds, or integrating with third-party platforms.
+                        </div>
+                        <div>
+                            It's also incredibly useful as a tool to modernize legacy systems. Old parts of the system can use RPC or an old queueing technology while
+                            the newer parts can use newer brokers. The old system and the new system don't need to know which part is using the old technology and which
+                            is using the newer.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. DLQ Management</h3>
                         <div>
+                            You've seen how messages get sent to the DLQ when they can't be processed. But then what?
                         </div>
-                    </div>
-
-                    <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
-                        <h3>Bonus round!</h3>
-
                         <div>
-                            Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
+                            DLQs are not the end of the road. Once a message ends up in the DLQ, you still need to decide how to deal with it. Some ideas:
+                            <ul>
+                                <li>Inspect and analyze failed messages.</li>
+                                <li>Build automated retry flows.</li>
+                                <li>Create dashboards to monitor them.</li>
+                                <li>Use alerting tools when message counts spike.</li>
+                            </ul>
+                        </div>
+                        <div class="note">
+                            Tools like Service Bus Explorer, or AppInsights can be invaluable for helping you manage your deal-letter queues.
                         </div>
 
-                        <h3 class="breadcrumb">1. </h3>
+                        <h3 class="breadcrumb" id="vs-step6">6. Message Ordering and FIFO</h3>
                         <div>
+                            Sometimes, the order messages arrive matters. Azure Service Bus lets you set Session IDs for ordered message processing.
+                            This can help when you're building things like chat systems, command queues, or anything where "first come, first serve" matters.
+                        </div>
+                        <div class="note">
+                            Explore Azure Service Bus Sessions to guarantee order of message processing.
                         </div>
 
-                        <h3 class="breadcrumb">2. </h3>
+                        <h3 class="breadcrumb" id="vs-step7">Monitoring and Observability</h3>
                         <div>
+                            Distributed systems are... distributed. If something goes wrong, logs on your local machine won't be enough. You'll need:
+                            <ul>
+                                <li>Centralized logging (Azure Monitor, Seq, ELK)</li>
+                                <li>Tracing and correlation IDs</li>
+                                <li>Dashboards that show message throughput and failure rates</li>
+                                <li>Alerts that warn you before things melt down</li>
+                            </ul>
                         </div>
-                    </div>
-                    <div>
-                        <a href="exercise9.html">Go to Exercise 9</a>
+                        <div class="note">
+                            Explore OTEL as a way to add observability and traceability to your system.
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step8">Wrapping up</h3>
+                        <div>
+                            Distributed systems can be tricky, but they don't have to be terrifying. With the patterns and tools you've learned
+                            in this workshop you're well on your way to building systems that are reliable, recoverable, and ready to scale. 🚀
+                        </div>
                     </div>
                 </div>
             </div>

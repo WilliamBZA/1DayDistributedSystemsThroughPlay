@@ -105,10 +105,10 @@
 
                         <h3 class="breadcrumb" id="vs-step4">4. Why Not Just Use Polly's WaitAndRetry?</h3>
                         <div>
-                            You might be wondering: can't I just use Polly's WaitAndRetry to delay retries? And you can, but there's a catch...
+                            You might be wondering: can't I just use Polly's <code>WaitAndRetry</code> to delay retries? And you can, but there's a catch...
                         </div>
                         <div>
-                            While Polly is waiting for the delayed retries to be processed, your application still has a lock on the message in the queue. If your message
+                            While Polly is waiting for the delayed retries to be processed, your application still has a <strong>lock on the message in the queue</strong>. If your message
                             handler fails, it can wait and try again. But while it's waiting, it's blocking the thread. And more importantly: it's still holding the lock on
                             the message. That means other messages can't be processed if you're not configured for concurrency. Worse, if the wait time is too long, the lock
                             might expire and the message could get picked up again, causing double processing.
@@ -170,7 +170,7 @@
                         </div>
                     </div>
                     <div>
-                        <a href="exercise9.html">Go to Exercise 9</a>
+                        <a href="exercise11.html">Go to Exercise 11</a>
                     </div>
                 </div>
             </div>
