@@ -192,7 +192,38 @@
                             We can achieve this in Azure ServiceBus by using Topis and Subscriptions.
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step3">3. Add a Topic to Azure Service Bus</h3>
+                        <h3 class="breadcrumb" id="vs-step3">3. Use a Transaction to send to multiple queues atomically</h3>
+                        <div>
+                            In Step 2, you saw that sending to multiple queues separately can lead to inconsistent state if one send fails.
+                        </div>
+                        <div>
+                            To solve this, Azure Service Bus supports <strong>transactions</strong> that allow you to group multiple operations into a single atomic unit. That way, either all messages are sent or none are.
+                        </div>
+                        <div>
+                            Modify your sender to use a transaction: In your sender app, replace the separate <code>SendMessageAsync</code> calls with code that uses a <code>ServiceBusTransaction</code>.
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">sender1</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>);
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">sender2</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinconsoledevice&quot;</span>);
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">receiver</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateReceiver</span>(<span style="color:#a31515;">&quot;incomingqueue&quot;</span>);
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">receivedMessage</span>&nbsp;=&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">receiver</span>.<span style="color:#74531f;">ReceiveMessageAsync</span>();
+
+<span style="color:blue;">using</span>&nbsp;(<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">transaction</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">TransactionScope</span>(<span style="color:#066555;">TransactionScopeAsyncFlowOption</span>.Enabled))
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">receiver</span>.<span style="color:#74531f;">CompleteMessageAsync</span>(<span style="color:#1f377f;">receivedMessage</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">sender1</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>());
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">sender2</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>());
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">transaction</span>.<span style="color:#74531f;">Complete</span>();
+}
+</pre>
+                        </div>
+                        <div>
+                            You can now test the transactionality by simulating a failure (e.g. by throwing an exception before the call to <code>transaction.Complete();</code>) and verifying that no messages are sent if the transaction fails.
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step4">4. Add a Topic to Azure Service Bus</h3>
                         <div>
                             Instead of a queue, we will now use a Topic. Topics allow multiple subscribers to receive the same message, enabling a publish-subscribe pattern.
                             To create a topic, follow these steps:
@@ -211,7 +242,7 @@
                             So let's bind the queues to that topic...
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step4">4. Bind both queues to the Topic</h3>
+                        <h3 class="breadcrumb" id="vs-step5">5. Bind both queues to the Topic</h3>
                         <div>
                             Now that we've created a <strong>Topic</strong>, we want both of our queues to receive messages from it. Instead of sending messages directly to the queues,
                             we will bind them as <strong>subscriptions</strong> to the topic. This way, any message sent to the <strong>Topic</strong> will be automatically forwarded to both queues.
@@ -245,7 +276,7 @@
                             </ol>
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step5">5. Send the message to the Topic only</h3>
+                        <h3 class="breadcrumb" id="vs-step6">6. Send the message to the Topic only</h3>
                         <div>
                             Now that we've set up <strong>queue bindings</strong>, our sender should <strong>only send messages to the Topic</strong>, and the queues will receive them automatically.
                         </div>
@@ -329,7 +360,7 @@
                             What happens to that message?
                         </div>
 
-                        <h3 class="breadcrumb">3. What is the impact of <strong>Competing Consumers</strong>?</h3>
+                        <h3 class="breadcrumb">3. What is the impact of Competing Consumers?</h3>
                         <div>
                             Run multiple instances of the Console Application listener and observe the impact. Do both instances get a copy of the messages? What if one of the instances throws an exception?
                         </div>

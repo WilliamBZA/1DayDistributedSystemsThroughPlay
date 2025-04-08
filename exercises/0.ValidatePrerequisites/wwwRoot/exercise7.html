@@ -63,7 +63,7 @@
 </pre>
                         </div>
                         <div>
-                            Making this change means that instead of prroceessing a single message at a time, your application will process up to 10 at a time.
+                            Making this change means that instead of processing a single message at a time, your application will process up to 10 at a time.
                             This takes advantage of multiple CPU cores and can reduce how long it takes to work through all the messages in a queue.
                         </div>
                         <div>
@@ -83,6 +83,11 @@
                         </div>
                         <div>
                             Try again with different concurrencies. Try 5, 20, and 100. See what impact each of these have on your throughput.
+                        </div>
+
+                        <div class="note">
+                            <strong>🧪 Tip:</strong> Try timing how long it takes to process all 100 messages before and after each change. Just a simple stopwatch or <code>DateTime.UtcNow</code> can help.
+                            Even better if you track CPU usage and memory too!
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Prefetching</h3>
@@ -143,7 +148,16 @@
                             Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
                         </div>
 
-                        <h3 class="breadcrumb">1. Change your handler to do something thread intensive</h3>
+                        <h3 class="breadcrumb">1. Measure throughput</h3>
+                        <div>
+                            Record how long it takes to process 100 messages with different <code>MaxConcurrentCalls</code> values (e.g. 1, 10, 50, 100).
+                            Is there a point where increasing concurrency stops helping?
+                        </div>
+                        <div>
+                            What patterns do you notice? At what point do you hit diminishing returns? Try to identify your system's sweet spot.
+                        </div>
+
+                        <h3 class="breadcrumb">2. Change your handler to do something thread intensive</h3>
                         <div>
                             How does this impact the optimal concurrency setting?
                         </div>
@@ -151,8 +165,59 @@
                             What if the handlers were doing something IO intensive?
                         </div>
 
-                        <h3 class="breadcrumb">2. </h3>
+                        <h3 class="breadcrumb">3. Combine prefetching + concurrency</h3>
                         <div>
+                            Set <code>MaxConcurrentCalls = 10</code> and <code>PrefetchCount = 40</code>. Then try with <code>PrefetchCount = 100</code>.
+                        </div>
+                        <div>
+                            What happens to memory usage and throughput? Try pushing it too far—how does your app behave under pressure?
+                        </div>
+
+                        <h3 class="breadcrumb">4. Push batching too far</h3>
+                        <div>
+                            Azure Service Bus batches aren't just limited by the number of messages: they're limited by <strong>total size</strong>. Even if you're only sending 100 messages,
+                            you might not be able to fit them all in one batch if the messages are large.
+                        </div>
+                        <div>
+                            Your task: experiment with batching to see where the limits are.
+                        </div>
+                        
+                        <ol>
+                            <li>Start with small messages, like <code>"Message 1"</code> to <code>"Message 100"</code>. Try batching all 100 into one send. Does it work?</li>
+                            <li>Now make the messages larger. Try messages that are 10 KB, 100 KB, or even bigger. At what point does <code>TryAddMessage()</code> return <code>false</code>?</li>
+                            <li>Print the index where the message no longer fits. What does that tell you about the real-world limit?</li>
+                        </ol>
+                        
+                        <div>
+                            Use this snippet as a starting point:
+                        </div>
+                        
+                        <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">batch</span>&nbsp;=&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">sender</span>.<span style="color:#74531f;">CreateMessageBatchAsync</span>();
+<span style="color:#8f08c4;">for</span>&nbsp;(<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">i</span>&nbsp;=&nbsp;0;&nbsp;<span style="color:#1f377f;">i</span>&nbsp;&lt;&nbsp;100;&nbsp;<span style="color:#1f377f;">i</span>++)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">bigMessage</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:blue;">string</span>(<span style="color:#a31515;">&#39;*&#39;</span>,&nbsp;<span style="color:#1f377f;">i</span>&nbsp;*&nbsp;100);&nbsp;<span style="color:#066555;">//&nbsp;increase&nbsp;size&nbsp;gradually</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">success</span>&nbsp;=&nbsp;<span style="color:#1f377f;">batch</span>.<span style="color:#74531f;">TryAddMessage</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">bigMessage</span>));
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(!<span style="color:#1f377f;">success</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Batch&nbsp;full&nbsp;at&nbsp;message&nbsp;</span>{<span style="color:#1f377f;">i</span>}<span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+}
+<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">sender</span>.<span style="color:#74531f;">SendMessagesAsync</span>(<span style="color:#1f377f;">batch</span>);
+</pre>
+                        
+                        <div>
+                            What's the maximum batch size in terms of:
+                            <ul>
+                                <li>Number of messages?</li>
+                                <li>Total data size (in KB or MB)?</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            Azure Service Bus has a size limit per batch (including headers), so this is a great chance to see that in action. The size limit is <strong>256KB</strong> for Standard tier, and <strong>1MB</strong>
+                            for Premium tier.
                         </div>
                     </div>
                     <div>

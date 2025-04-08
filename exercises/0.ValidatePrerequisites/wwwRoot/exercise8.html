@@ -16,7 +16,7 @@
         <div class="container heading">
             <div>
                 <h1>Exercise 8:</h1>
-                <h4>Timeouts and throttling</h4>
+                <h4>Timeouts</h4>
             </div>
         </div>
         
@@ -25,7 +25,7 @@
                 <ul class="nav nav-tabs" id="exercise-headings" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="gpio-tab" type="button" data-bs-toggle="tab" data-bs-target="#gpio-tab-content" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">
-                            Timouts and throttling
+                            Timeouts
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -48,22 +48,74 @@
                         <div>
                             Here's what we'll explore:
                             <ul>
+                                <li>The difference between the two receive modes</li>
                                 <li>What happens when your message handler takes too long and loses the lock on the message?</li>
                                 <li>What to do when your downstream service is overloaded or rate-limited — and how to back off gracefully instead of making it worse.</li>
                             </ul>
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step1">1. Message Visibility Timeouts (a.k.a. Lock Duration)</h3>
+                        <h3 class="breadcrumb" id="vs-step1">1. ReceiveAndDelete vs. PeekLock: The Trade-Off</h3>
                         <div>
-                            When you receive a message from Azure Service Bus, it doesn't just disappear: it gets locked. That means no one else can see or
-                            process it... for a while. But if your handler takes too long, that lock expires. The message becomes visible again and might get
-                            picked up a second time. Uh-oh - duplicate processing.
+                            When receiving messages from Azure Service Bus, your client can use one of two modes:
+                        </div>
+                        <div>
+                            <ul>
+                                <li><strong>PeekLock</strong> (default): the message is locked, not removed. You must explicitly <code>Complete()</code> it when processing is done.</li>
+                                <li><strong>ReceiveAndDelete</strong>: the message is deleted immediately upon receipt. No second chances.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            In most systems, <strong>PeekLock</strong> is safer. If your app crashes mid-process, the message can be retried. But <strong>ReceiveAndDelete</strong> can be faster
+                            if you're okay with occasionally losing a message (e.g., for telemetry).
+                        </div>
+                        <div>
+                            Chang your receiver to use <code>ReceiveMode.ReceiveAndDelete</code>, and send a message that fails when processing.
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">receiver</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateReceiver</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>,&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusReceiverOptions</span>
+{
+&nbsp;&nbsp;&nbsp;&nbsp;ReceiveMode&nbsp;=&nbsp;<span style="color:#066555;">ServiceBusReceiveMode</span>.ReceiveAndDelete
+});
+</pre>
+                        </div>
+
+                        <div>
+                            What happens to the message in the queue?
+                        </div>
+                        <div>
+                            In what cases do you think <code>ReceiveAndDelete</code> would be a better choice than <code>PeekLock</code>? Why?
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step2">2. Message Visibility Timeouts</h3>
+                        <div>
+                            When you receive a message from Azure Service Bus in <code>PeekLock</code> mode, it doesn't just disappear: it gets locked for
+                            a <strong>limited time</strong>, known as the <strong>lock duration</strong>.
+                        </div>
+                        <div>
+                            This lock prevents other consumers from processing the same message, but it's temporary. If you don't complete the message within this
+                            time, the lock expires, and the message becomes <strong>visible to other consumers again</strong>. This can lead to:
+                            <ul>
+                                <li>Duplicate processing of messages</li>
+                                <li>Inconsistent application state</li>
+                                <li>Hard-to-reproduce bugs</li>
+                            </ul>
+                        </div>
+                        <div>
+                            If your handler takes too long, the lock expires. When this happens, the message becomes visible again and can get
+                            picked up a second time.
                         </div>
                         <div>
                             Let's see what happens when your processing logic takes longer than the lock duration.
                         </div>
                         <div>
-                            First, change your handler to simulate taking more than 1 minute to process the message:
+                            You're about to simulate what happens when a message takes longer to process than the lock allows.
+                        </div>
+                        <div>
+                            First, check your queue's lock duration setting in the Azure Portal. By default, it's 1 minute.
+                            For this test, make sure it's set to <strong>1 Minute</strong>.
+                        </div>
+                        <div>
+                            Now change your message handler to take 75 seconds - longer than the lock duration:
                         </div>
                         <div>
                             <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#066555;">Task</span>&nbsp;<span style="color:#74531f;">HandleToggleLEDs</span>(<span style="color:#066555;">BinaryData</span>&nbsp;<span style="color:#1f377f;">body</span>)
@@ -74,25 +126,84 @@
 }
 </pre>
                         </div>
-
                         <div>
-                            
+                            Run your app and observe the console. You might notice that:
+                            <ul>
+                                <li>The message handler logs <code>Starting long processing...</code></li>
+                                <li>But <strong>before it finishes</strong>, your handler might be triggered a second time for the <strong>same message</strong></li>
+                            </ul>
+                        </div>
+                        <div>
+                            This happens because after 60 seconds, the lock expires. Azure Service Bus considers the message "unprocessed" and makes it available again.
+                        </div>
+                        <div>
+                            <strong>Why this matters</strong>
+                        </div>
+                        <div>
+                            In a real system, this could cause:
+                            <ul>
+                                <li>Actions to run twice (e.g. toggling the LEDs twice, or charging a customer's card multiple times)</li>
+                                <li>Race conditions if the original handler finishes after the second one has already started</li>
+                            </ul>
+                            Which is less than ideal...
+                        </div>
+                        <div>
+                            Sometimes though you simply have to do something that takes longer than a minute to complete. So how do we extend this timout?
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step2">2. </h3>
+                        <h3 class="breadcrumb" id="vs-step3">3. Renew the Lock While You Work</h3>
                         <div>
+                            Now that you've seen what happens when the lock expires, let's learn how to keep that lock alive while you're still processing
+                            the message. This is called <strong>Lock Renewal</strong>.
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step3">3. </h3>
                         <div>
+                            You don't always know how long a message will take to process. Sometimes it's a few seconds, other times it might be minutes -
+                            especially if you're calling out to downstream services that could be slow. Rather than guessing and setting a huge lock duration
+                            (which can cause its own issues), Azure lets you <i>renew the lock as you go</i>.
                         </div>
-
-                        <h3 class="breadcrumb" id="vs-step4">4. </h3>
                         <div>
+                            When you create a processor, you can specify an <code>MaxAutoLockRenewalDuration</code>. This tells Azure how long
+                            it should keep trying to renew the lock while you're still working.
                         </div>
-
-                        <h3 class="breadcrumb" id="vs-step5">5. </h3>
                         <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">receiver</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateProcessor</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>,&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusProcessorOptions</span>
+{
+&nbsp;&nbsp;&nbsp;&nbsp;MaxAutoLockRenewalDuration&nbsp;=&nbsp;<span style="color:#066555;">TimeSpan</span>.<span style="color:#74531f;">FromMinutes</span>(2)
+});
+</pre>
+                        </div>
+                        <div>
+                            That's it. If your handler takes 75 seconds, no problem: the lock will renew under the hood and the message won't get reprocessed.
+                        </div>
+                        <div>
+                            <strong>Choosing a good value for <code>MaxAutoLockRenewalDuration</code>:</strong>
+                        </div>
+                        <div>
+                            How long should you ask Azure to keep renewing the lock for you? It depends on how long your message handler usually takes as well as how much margin you want to give yourself.
+                        </div>
+                        <div>
+                            Here are a few tips to help decide:
+                        </div>
+                        <div>
+                            Start by thinking about your worst-case scenario - not the average. If most messages process in 2 seconds, but occasionally one takes 30, you should plan for 30. Add a little safety margin too. 
+                            <div class="note">
+                                <i>Example: If your longest processing time is 45 seconds, consider setting MaxAutoLockRenewalDuration to 1 minute.</i>
+                            </div>
+                        </div>
+                        <div>
+                            It might be tempting to crank it up to 30 minutes "just in case," but that's not always a good idea either. If your handler crashes or hangs, Azure won't know for a while and other processors
+                            can't touch that message until the lock finally times out. This delays retries and wastes queue throughput.
+                        </div>
+                        <div>
+                            Try to stick to a few minutes at most unless you have a really good reason to go longer.
+                        </div>
+                        <div>
+                            Set an initial value based on your expectations, then monitor the system. Are locks still expiring? Are you seeing duplicate messages?
+                            Are your messages finishing way faster than the renewal window? Use those signals to refine the setting.
+                        </div>
+                        <div>
+                            <strong>Tune It Based on Real-World Behavior</strong>
                         </div>
                     </div>
 
@@ -103,12 +214,14 @@
                             Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
                         </div>
 
-                        <h3 class="breadcrumb">1. </h3>
+                        <h3 class="breadcrumb">1. What happens when lock renewal fails?</h3>
                         <div>
-                        </div>
-
-                        <h3 class="breadcrumb">2. </h3>
-                        <div>
+                            Enable <code>MaxAutoLockRenewalDuration</code> and simulate a temporary network failure in your handler after the first few seconds.
+                            <ul>
+                                <li>Does the lock still get renewed?</li>
+                                <li>What kind of exceptions do you see (if any)?</li>
+                                <li>Is the message still in the queue after the lock renewal fails?</li>
+                            </ul>
                         </div>
                     </div>
                     <div>

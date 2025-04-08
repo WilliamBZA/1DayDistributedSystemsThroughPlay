@@ -63,3 +63,10 @@ pre {
 .green {
     color: olivedrab;
 }
+
+.note {
+    background:#f9f9f9;
+    padding: 1rem;
+    border-left: 4px solid #4B9CD3;
+    margin: 1rem 0;
+}
