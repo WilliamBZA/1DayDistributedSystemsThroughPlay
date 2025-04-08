@@ -16,7 +16,7 @@
         <div class="container heading">
             <div>
                 <h1>Exercise 8:</h1>
-                <h4>Delayed delivery</h4>
+                <h4>Timeouts and throttling</h4>
             </div>
         </div>
         
@@ -25,7 +25,7 @@
                 <ul class="nav nav-tabs" id="exercise-headings" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="gpio-tab" type="button" data-bs-toggle="tab" data-bs-target="#gpio-tab-content" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">
-                            ACK/NACK
+                            Timouts and throttling
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -38,10 +38,45 @@
                 <div class="tab-content" id="exerciseContent">
                     <div class="tab-pane show active" id="gpio-tab-content" role="tabpanel" aria-labelledby="gpio-tab" tabindex="0">
                         <div>
+                            Distributed systems don't always fail cleanly. Sometimes a service crashes. Sometimes it just gets slow. Other times, things seem fine
+                            - but a message that should be processed just fine seems to take forever.
+                        </div>
+                        <div>
+                            In this exercise, we'll dig into some of the real-world failure modes you'll face when building with Azure Service Bus and other
+                            cloud-based messaging systems. You'll learn how to recognize them, simulate them, and start thinking about strategies to handle them cleanly.
+                        </div>
+                        <div>
+                            Here's what we'll explore:
+                            <ul>
+                                <li>What happens when your message handler takes too long and loses the lock on the message?</li>
+                                <li>What to do when your downstream service is overloaded or rate-limited — and how to back off gracefully instead of making it worse.</li>
+                            </ul>
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step1">1. </h3>
+                        <h3 class="breadcrumb" id="vs-step1">1. Message Visibility Timeouts (a.k.a. Lock Duration)</h3>
                         <div>
+                            When you receive a message from Azure Service Bus, it doesn't just disappear: it gets locked. That means no one else can see or
+                            process it... for a while. But if your handler takes too long, that lock expires. The message becomes visible again and might get
+                            picked up a second time. Uh-oh - duplicate processing.
+                        </div>
+                        <div>
+                            Let's see what happens when your processing logic takes longer than the lock duration.
+                        </div>
+                        <div>
+                            First, change your handler to simulate taking more than 1 minute to process the message:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#066555;">Task</span>&nbsp;<span style="color:#74531f;">HandleToggleLEDs</span>(<span style="color:#066555;">BinaryData</span>&nbsp;<span style="color:#1f377f;">body</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Starting&nbsp;long&nbsp;processing...&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#066555;">Task</span>.<span style="color:#74531f;">Delay</span>(<span style="color:#066555;">TimeSpan</span>.<span style="color:#74531f;">FromSeconds</span>(75));
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Finished!&quot;</span>);
+}
+</pre>
+                        </div>
+
+                        <div>
+                            
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. </h3>
