@@ -69,5 +69,12 @@ pre {
     padding: 1rem;
     border-left: 4px solid #4B9CD3;
     margin: 1rem 0;
+<<<<<<< Updated upstream
     font-style: italic;
+=======
+}
+
+.footer-nav a {
+    margin-right: 2em;
+>>>>>>> Stashed changes
 }
