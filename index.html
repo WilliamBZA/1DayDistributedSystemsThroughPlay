@@ -1,0 +1,343 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Escape room fun!</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Exercises</a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item active" href="index.html">Exercise 1 - Intro to NanoFramework</a></li>
+                                    <li><a class="dropdown-item" href="exercise2.html">Exercise 2 - Turning devices on/off</a></li>
+                                    <li><a class="dropdown-item" href="exercise3.html">Exercise 3 - Responding to HTTP requests</a></li>
+                                    <li><a class="dropdown-item" href="exercise4.html">Exercise 4 - Intro to Azure Service Bus</a></li>
+                                    <li><a class="dropdown-item" href="exercise5.html">Exercise 5 - Pub/Sub</a></li>
+                                    <li><a class="dropdown-item" href="exercise6.html">Exercise 6 - Dealing with failures</a></li>
+                                    <li><a class="dropdown-item" href="exercise7.html">Exercise 7 - Building an efficient pipeline</a></li>
+                                    <li><a class="dropdown-item" href="exercise8.html">Exercise 8 - Message Timeouts</a></li>
+                                    <li><a class="dropdown-item" href="exercise9.html">Exercise 9 - Rate Limiting</a></li>
+                                    <li><a class="dropdown-item" href="exercise10.html">Exercise 10 - Delayed Delivery</a></li>
+                                    <li><a class="dropdown-item" href="exercise11.html">Exercise 11 - Further patterns to learn</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container heading">
+            <div>
+                <h1>Exercise 1:</h1>
+                <h4>Deploy an application</h4>
+            </div>
+        </div>
+        
+        <div class="container exercisedetails">
+            <div class="col-lg-12">
+                <ul class="nav nav-tabs" id="exercise-headings" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="visualstudio-tab" type="button" data-bs-toggle="tab" data-bs-target="#visualstudio-tab-content" role="tab" aria-controls="visualstudio-tab-content" aria-selected="false">Visual Studio</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="vscode-tab" type="button" data-bs-toggle="tab" data-bs-target="#vscode-tab-content" role="tab" aria-controls="vscode-tab-content" aria-selected="true">VS Code</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="bonusexercise-tab" type="button" data-bs-toggle="tab" data-bs-target="#bonus-exercise-tab-content" role="tab" aria-controls="bonus-exercise-tab-content" aria-selected="true">Bonus exercises</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="exerciseContent">
+                    <div class="tab-pane show active" id="visualstudio-tab-content" role="tabpanel" aria-labelledby="visualstudio-tab" tabindex="0">
+                        <h3>Deploying with Visual Studio</h3>
+
+                        <div>
+                            Deploying a NanoFramework application from Visual Studio is typically easy and involves only a few steps:
+                        </div>
+
+                        <div>
+                            <ol>
+                                <li>Make sure the correct device is selected in the extension</li>
+                                <li>F5 to run the application</li>
+                            </ol>
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step1">1. Make sure the correct device is selected</h3>
+
+                        <div>
+                            The NanoFramework extension for Visual Studio adds a <code>Device Explorer</code> window with lists any compatible ESP32 devices that are connected
+                            to the computer. To open the window, go to <code>View -> Other Windows -> Device Explorer</code>.
+                            <img src="img/devicieexplorerwindow.png" />
+                        </div>
+
+                        <div>
+                            Once this window is open, it will list all compatible devices connected to the computer (in this case, there should only be one). Select the
+                            device you wish to flash. In the example below, the device is connected to <code>COM3</code> and is an <code>ESP32_REV3</code> image.
+                        </div>
+                        <img src="img/deviceselection.png" />
+
+                        <h3 class="breadcrumb" id="vs-step3">2. F5 to run the application</h3>
+                        <div>
+                            Your application is now ready to deploy. Hit <kbd>F5</kbd> to deploy and debug your application. The Visual Studio extension will now compile
+                            your application, deploy it to the <a href="#vs-step1">selected device</a>, and start debugging. You can use most Visual Studio debugging tools (e.g.
+                            Breakpoints, Quick Watch, Watches, etc.)
+                        </div>
+                        <img src="img/debugging.png" />
+
+                        <h3 class="breadcrumb" id="vs-step3">3. Success!</h3>
+                        <div>
+                            If you managed to deploy everything successfully, you should see a message in your debugger:
+                            <code>You have successfully deployed your first NanoFramework application at 01/01/1970 00:08:18</code>
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step4">4. Connecting to WiFi</h3>
+                        <div>
+                            You'll notice 2 things of interest:
+                            <ol>
+                                <li>The connected screen will display some similar to:<pre>Started
+01/01/1970 00:02
+0.0.0.0</pre></li>
+                                <li>The log entry in the Output tab of Visual Studio will log an incorrect date</li>
+                            </ol>
+                            In fact, you might recognise the date (01/01/1970) as one of the typical Epoch dates.
+                        </div>
+                        <div>
+                            This is because the ESP32 doesn't have a real-time clock to keep track of the date.
+                        </div>
+                        <div>
+                            NanoFramework manages the date and time of devices by getting the current time once the device connects to a network with a
+                            time server. So let's connect to the WiFi now...
+                        </div>
+                        <div>
+                            There is a method called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectToWiFi</span>()</span>
+                            which we need to complete. It looks like this:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ConnectToWiFi</span>()
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Todo:&nbsp;Connect&nbsp;to&nbsp;WiFi</span>
+}
+</pre>
+                        </div>
+                        <div>
+                            NanoFramework provides us with a class called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">WifiNetworkHelper</span></span>
+                            that exposes a static method named
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            which we can use to connect to the WiFi network. The method takes 2 paramaters:
+                            <ul>
+                                <li>The SSID (<code>introtomessaging</code>)</li>
+                                <li>The password for the WiFi network (<code>IsY2TPxx0TI9</code>)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            This method returns <code>true</code> or <code>false</code> depending on if the connection to the WiFi was successful.
+                        </div>
+                        <div>
+                            Add a call to <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            to connect to the WiFi, and pass in the SSID and Password (they're in the list above).
+                        </div>
+                        <div>
+                            After you've done that, when you deploy your application again you should see that the date and time displayed are now correct.
+                        </div>
+                        <div>
+                            The last thing we want to do is to display the IP Address of our device. To do that, make a call to:
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;">ipAddress&nbsp;=&nbsp;<span style="color:#066555;">IPGlobalProperties</span>.<span style="color:#74531f;">GetIPAddress</span>().<span style="color:#74531f;">ToString</span>();
+</pre>
+                        </div>
+                        <div>
+                            Now when we deploy our application, the OLED screen will show the correct date and time as well as the IP Address of our device.
+                        </div>
+                        <div>
+                            🎉👏
+                        </div>
+                        <div>
+                            If you're done early, why not try some of the Bonus Exercises?
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="1">
+                        <h3>Deploying with VSCode</h3>
+                        <div>
+                            There are 2 steps to deploying a NanoFramework application to a microcontroller like an ESP32 (which is what we are using during this workshop)
+                            using the vscode add-on. At a summary, these steps are:
+                        </div>
+
+                        <div>
+                            <ol>
+                                <li>Build the project</li>
+                                <li>Deploy the project</li>
+                            </ol>
+                        </div>
+                        <hr/>
+
+                        <h3 class="breadcrumb" id="vscode-step1">1. Build the application</h3>
+                        <div>
+                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>NanoFramework: Build Project</code>. Once found, run that command.</div>
+                            <img src="img/build.png" class="text-center" />
+                        </div>
+                        
+                        <div>
+                            <div>The build command will present you with a parameter, asking you which solution you would like to build. Select the <code>1.Deployment\Deployment.sln</code> solution file.</div>
+                            <img src="img/selectsolution.png" />
+                        </div>
+                        <div>
+                            <div>The command will now compile the solution for you, getting it ready to deploy. The build log will look something like this:</div>
+                            <img src="img/buildlog.png" />
+
+                            <div>Once complete, your solution will be built. Now you need to deploy it.</div>
+                        </div>
+                        <hr/>
+
+                        <h3 class="breadcrumb" id="vscode-step2">2. Deploy the application</h3>
+
+                        <div>
+                            <div>Open the <code>Command Palette</code> (Default shortcut is: <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and search for <code>NanoFramework: Deploy Project</code>. Once found, run that command.</div>
+                            <img src="img/deployproject.png" />
+                        </div>
+                        <div>
+                            <div>The command will ask you for a parameter, asking you for which solution to deploy. Select the <code>1.Deployment\Deployment.sln</code> solution file.</div>
+                            <img src="img/selectsolution.png" />
+                            <div>The command will now ask you for a second parameter: which COM port to deploy to. Select the COM port that the device is <a href="findcomport.html">plugged into.</a></div>
+                            <img src="img/comtarget.png" />
+                        </div>
+                        <div>
+                            <div>
+                                Your solution will now be deployed to the device. The output should look something like this:
+                            </div>
+                            <img src="img/deploylog.png" />
+                        </div>
+
+                        <h3 class="breadcrumb" id="vscode-step3">3. Success!</h3>
+                        <div>
+                            Congratulations! You have managed to deploy your first NanoFramework application. Now we need to make it do something!
+                        </div>
+                        <h3 class="breadcrumb" id="vscode-step4">4. Connecting to WiFi</h3>
+                        <div>
+                            If you look at the OLED screen connected to your device, You'll notice something:
+                        </div>
+                        <div>
+                            The connected screen will display some similar to:<pre>Started
+01/01/1970 00:02
+0.0.0.0</pre>
+                            In fact, you might recognise the date (01/01/1970) as one of the typical Epoch dates.
+                        </div>
+                        <div>
+                            This is because the ESP32 doesn't have a real-time clock to keep track of the date.
+                        </div>
+                        <div>
+                            NanoFramework manages the date and time of devices by getting the current time once the device connects to a network with a
+                            time server. So let's connect to the WiFi now...
+                        </div>
+                        <div>
+                            There is a method called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectToWiFi</span>()</span>
+                            which we need to complete. It looks like this:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ConnectToWiFi</span>()
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Todo:&nbsp;Connect&nbsp;to&nbsp;WiFi</span>
+}
+</pre>
+                        </div>
+                        <div>
+                            NanoFramework provides us with a class called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">WifiNetworkHelper</span></span>
+                            that exposes a static method named
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            which we can use to connect to the WiFi network. The method takes 2 paramaters:
+                            <ul>
+                                <li>The SSID (<code>introtomessaging</code>)</li>
+                                <li>The password for the WiFi network (<code>IsY2TPxx0TI9</code>)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            This method returns <code>true</code> or <code>false</code> depending on if the connection to the WiFi was successful.
+                        </div>
+                        <div>
+                            Add a call to <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            to connect to the WiFi, and pass in the SSID and Password (they're in the list above).
+                        </div>
+                        <div>
+                            After you've done that, when you deploy your application again you should see that the date and time displayed are now correct.
+                        </div>
+                        <div>
+                            The last thing we want to do is to display the IP Address of our device. To do that, make a call to:
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;">ipAddress&nbsp;=&nbsp;<span style="color:#066555;">IPGlobalProperties</span>.<span style="color:#74531f;">GetIPAddress</span>().<span style="color:#74531f;">ToString</span>();
+</pre>
+                        </div>
+                        <div>
+                            Now when we deploy our application, the OLED screen will show the correct date and time as well as the IP Address of our device.
+                        </div>
+                        <div>
+                            🎉👏
+                        </div>
+                        <div>
+                            If you're done early, why not try some of the Bonus Exercises?
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
+                        <h3>Bonus round!</h3>
+
+                        <div>
+                            Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
+                        </div>
+
+                        <h3 class="breadcrumb">1. Scan for available all WiFi networks</h3>
+                        <div>
+                            Use the ESP32's Wi-Fi radio to scan for nearby wireless networks and show the results on the OLED. This could be as simple as displaying
+                            the number of networks found or cycling through a few network names and signal strengths on the screen.
+                        </div>
+                        <div>
+                            It's a quick way to explore the networking API beyond just connecting, and it gives immediate feedback on the device's surroundings.
+                        </div>
+                        <div class="note">
+                            🔎 Tip: The starting point will be to use the <code>WifiAdapter wifi = WifiAdapter.FindAllAdapters()[0]</code> wifi adapter
+                        </div>
+
+                        <h3 class="breadcrumb">2. Implement a marquee on the OLED screen</h3>
+                        <div>
+                            The OLED screen can only show a little information. If you want to display text longer than a few characters, you'll have to implement
+                            scrolling on the screen.
+                        </div>
+                        <div>
+                            Complete the implementation of the <code>Marquee</code> method in the <code>Infrastructure\Screen.cs</code> file.
+                        </div>
+                        <div class="note">
+                            🔎 Hint: You can create a <code>Thread</code> class and use the thread to move the text
+                        </div>
+                    </div>
+
+                    <div class="footer-nav">
+                        <a href="exercise2.html">Go to Exercise 2 &gt;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
