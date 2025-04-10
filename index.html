@@ -94,25 +94,8 @@
                             device you wish to flash. In the example below, the device is connected to <code>COM3</code> and is an <code>ESP32_REV3</code> image.
                         </div>
                         <img src="img/deviceselection.png" />
-<!--
-                        <h3 class="breadcrumb" id="vs-step2">2. Set content files to Copy Always</h3>
 
-                        <div>
-                            If there are any content files (e.g. html, js, css, or images) that need to be deployed along with the application, their <code>Build Action</code>
-                            must be set to <code>Content</code> and the <code>Copy to Ouput Directory</code> setting must be set to <code>Always</code> or
-                            <code>Copy if newer</code>.
-                        </div>
-                        <img src="img/buildaction.png" />
-
-                        <div>
-                            The build action will copy the files to the internal storage of the device, in the same folder path that they are in relative to the Visual Studio
-                            solution. If you wish to change where the files are copied to, you can edit the <code>nfproj</code> file to specify the destination location
-                            for the file you are copying.
-                        </div>
-                        <img src="img/customlocation.png" />
--->
                         <h3 class="breadcrumb" id="vs-step3">2. F5 to run the application</h3>
-
                         <div>
                             Your application is now ready to deploy. Hit <kbd>F5</kbd> to deploy and debug your application. The Visual Studio extension will now compile
                             your application, deploy it to the <a href="#vs-step1">selected device</a>, and start debugging. You can use most Visual Studio debugging tools (e.g.
@@ -120,17 +103,83 @@
                         </div>
                         <img src="img/debugging.png" />
 
-                        <h3 class="breadcrumb" id="vs-step4">3. Success!</h3>
+                        <h3 class="breadcrumb" id="vs-step3">3. Success!</h3>
                         <div>
                             If you managed to deploy everything successfully, you should see a message in your debugger:
                             <code>You have successfully deployed your first NanoFramework application at 01/01/1970 00:08:18</code>
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step4">4. Connecting to WiFi</h3>
+                        <div>
+                            You'll notice 2 things of interest:
+                            <ol>
+                                <li>The connected screen will display some similar to:<pre>Started
+01/01/1970 00:02
+0.0.0.0</pre></li>
+                                <li>The log entry in the Output tab of Visual Studio will log an incorrect date</li>
+                            </ol>
+                            In fact, you might recognise the date (01/01/1970) as one of the typical Epoch dates.
+                        </div>
+                        <div>
+                            This is because the ESP32 doesn't have a real-time clock to keep track of the date.
+                        </div>
+                        <div>
+                            NanoFramework manages the date and time of devices by getting the current time once the device connects to a network with a
+                            time server. So let's connect to the WiFi now...
+                        </div>
+                        <div>
+                            There is a method called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectToWiFi</span>()</span>
+                            which we need to complete. It looks like this:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ConnectToWiFi</span>()
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Todo:&nbsp;Connect&nbsp;to&nbsp;WiFi</span>
+}
+</pre>
+                        </div>
+                        <div>
+                            NanoFramework provides us with a class called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">WifiNetworkHelper</span></span>
+                            that exposes a static method named
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            which we can use to connect to the WiFi network. The method takes 2 paramaters:
+                            <ul>
+                                <li>The SSID (<code>introtomessaging</code>)</li>
+                                <li>The password for the WiFi network (<code>IsY2TPxx0TI9</code>)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            This method returns <code>true</code> or <code>false</code> depending on if the connection to the WiFi was successful.
+                        </div>
+                        <div>
+                            Add a call to <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            to connect to the WiFi, and pass in the SSID and Password (they're in the list above).
+                        </div>
+                        <div>
+                            After you've done that, when you deploy your application again you should see that the date and time displayed are now correct.
+                        </div>
+                        <div>
+                            The last thing we want to do is to display the IP Address of our device. To do that, make a call to:
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;">ipAddress&nbsp;=&nbsp;<span style="color:#066555;">IPGlobalProperties</span>.<span style="color:#74531f;">GetIPAddress</span>().<span style="color:#74531f;">ToString</span>();
+</pre>
+                        </div>
+                        <div>
+                            Now when we deploy our application, the OLED screen will show the correct date and time as well as the IP Address of our device.
+                        </div>
+                        <div>
+                            🎉👏
+                        </div>
+                        <div>
+                            If you're done early, why not try some of the Bonus Exercises?
                         </div>
                     </div>
 
                     <div class="tab-pane" id="vscode-tab-content" role="tabpanel" aria-labelledby="vscode-tab" tabindex="1">
                         <h3>Deploying with VSCode</h3>
                         <div>
-                            There are 4 steps to deploying a NanoFramework application to a microcontroller like an ESP32 (which is what we are using during this workshop)
+                            There are 2 steps to deploying a NanoFramework application to a microcontroller like an ESP32 (which is what we are using during this workshop)
                             using the vscode add-on. At a summary, these steps are:
                         </div>
 
@@ -138,8 +187,6 @@
                             <ol>
                                 <li>Build the project</li>
                                 <li>Deploy the project</li>
-                                <li>Add all Content Files to a deploy.json</li>
-                                <li>Deploy the files</li>
                             </ol>
                         </div>
                         <hr/>
@@ -180,71 +227,74 @@
                             </div>
                             <img src="img/deploylog.png" />
                         </div>
-                        <!--<div>
-                            <div>
-                                With your solution deployed, you now need to deploy the static files that will be served by the device's web server.
-                            </div>
-                        </div>
-                        <hr/>
 
-                        
-                        <h3 class="breadcrumb" id="vscode-step3">3. Add all content files to a deploy.json file</h3>
-
-                        <div>
-                            The json file must have a format similar to the following:
-                            <pre>{
-    "serialport":"COM3",
-    "files": [{
-        "DestinationFilePath": "I:\\filetoread.png",
-        "SourceFilePath": "filetoread.png"
-    }, {
-        "DestinationFilePath": "I:\\smallfiletoread.png",
-        "SourceFilePath": "smallfiletoread.png"
-    }]
-}</pre>
-                            <div>
-                                where each file that must be copied to the device has a <code>DestinationFilePath</code> property and a <code>SourceFilePath</code> property.<br/><br/>
-                                The <code>SourceFilePath</code> property represents where the file that must be copied resides on your local disk. This is a path relative to where
-                                the tool that copies the content files will run.
-                            </div>
-                            <div>
-                                The <code>DestinationFilePath</code> property is where the file must reside on the device. Subdirectories are supported.
-                            </div>
-                            <div>
-                                The drive used depends on the type of storage being used. If using the internal device storage, the drive is <code>I:\\</code>.
-                            </div>
-                            <ul>
-                                <li><code>I:</code> Internal storage</li>
-                                <li><code>D:</code> SD Card</li>
-                                <li><code>E:</code> USB storage</li>
-                            </ul>
-                        </div>
-                        <hr/>
-
-                        <h3 class="breadcrumb" id="vscode-step4">4. Deploy the content files</h3>
-
-                        <div>
-                            <div>
-                                Deploying the content files is done by running a <code>nanoff</code> dotnet tool.
-                            </div>
-                            <div>
-                                Install the nanoff tool by running the command <code>dotnet tool install -g nanoff</code>
-                            </div>
-                            <div>
-                                Once <code>nanoff</code> is installed, you can use it deploy content files by running: <code>nanoff --filedeployment deploy.json</code> where
-                                <code>deploy.json</code> is the json file you made in <a href="#vscode-step3">step 3.</a>
-                            </div>
-                            <img src="img/nanoffdeploy.png" />
-
-                            <div>
-                                Once the command has completed, your content files will be deployed on the device.
-                            </div>
-                        </div>
-                        -->
-
-                        <h3 class="breadcrumb" id="vscode-step5">3. Success!</h3>
+                        <h3 class="breadcrumb" id="vscode-step3">3. Success!</h3>
                         <div>
                             Congratulations! You have managed to deploy your first NanoFramework application. Now we need to make it do something!
+                        </div>
+                        <h3 class="breadcrumb" id="vscode-step4">4. Connecting to WiFi</h3>
+                        <div>
+                            If you look at the OLED screen connected to your device, You'll notice something:
+                        </div>
+                        <div>
+                            The connected screen will display some similar to:<pre>Started
+01/01/1970 00:02
+0.0.0.0</pre>
+                            In fact, you might recognise the date (01/01/1970) as one of the typical Epoch dates.
+                        </div>
+                        <div>
+                            This is because the ESP32 doesn't have a real-time clock to keep track of the date.
+                        </div>
+                        <div>
+                            NanoFramework manages the date and time of devices by getting the current time once the device connects to a network with a
+                            time server. So let's connect to the WiFi now...
+                        </div>
+                        <div>
+                            There is a method called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectToWiFi</span>()</span>
+                            which we need to complete. It looks like this:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ConnectToWiFi</span>()
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Todo:&nbsp;Connect&nbsp;to&nbsp;WiFi</span>
+}
+</pre>
+                        </div>
+                        <div>
+                            NanoFramework provides us with a class called
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">WifiNetworkHelper</span></span>
+                            that exposes a static method named
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            which we can use to connect to the WiFi network. The method takes 2 paramaters:
+                            <ul>
+                                <li>The SSID (<code>introtomessaging</code>)</li>
+                                <li>The password for the WiFi network (<code>IsY2TPxx0TI9</code>)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            This method returns <code>true</code> or <code>false</code> depending on if the connection to the WiFi was successful.
+                        </div>
+                        <div>
+                            Add a call to <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
+                            to connect to the WiFi, and pass in the SSID and Password (they're in the list above).
+                        </div>
+                        <div>
+                            After you've done that, when you deploy your application again you should see that the date and time displayed are now correct.
+                        </div>
+                        <div>
+                            The last thing we want to do is to display the IP Address of our device. To do that, make a call to:
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;">ipAddress&nbsp;=&nbsp;<span style="color:#066555;">IPGlobalProperties</span>.<span style="color:#74531f;">GetIPAddress</span>().<span style="color:#74531f;">ToString</span>();
+</pre>
+                        </div>
+                        <div>
+                            Now when we deploy our application, the OLED screen will show the correct date and time as well as the IP Address of our device.
+                        </div>
+                        <div>
+                            🎉👏
+                        </div>
+                        <div>
+                            If you're done early, why not try some of the Bonus Exercises?
                         </div>
                     </div>
 
@@ -255,52 +305,28 @@
                             Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
                         </div>
 
-                        <h3 class="breadcrumb">1. Connect to the WiFi network</h3>
+                        <h3 class="breadcrumb">1. Scan for available all WiFi networks</h3>
                         <div>
-                            If you're using Visual Studio, you should have noticed that the date that was output by the log statement was very
-                            incorrect. In fact, you might recognise the date (01/01/1970) as one of the typical Epoch dates.
+                            Use the ESP32's Wi-Fi radio to scan for nearby wireless networks and show the results on the OLED. This could be as simple as displaying
+                            the number of networks found or cycling through a few network names and signal strengths on the screen.
                         </div>
                         <div>
-                            This is because the ESP32 doesn't have a real-time clock to keep track of the date.
+                            It's a quick way to explore the networking API beyond just connecting, and it gives immediate feedback on the device's surroundings.
                         </div>
-                        <div>
-                            NanoFramework manages the date and time of devices by getting the current time once the device connects to a network with a
-                            time server.
-                        </div>
-                        <div>
-                            
+                        <div class="note">
+                            🔎 Tip: The starting point will be to use the <code>WifiAdapter wifi = WifiAdapter.FindAllAdapters()[0]</code> wifi adapter
                         </div>
 
-                        <h3 class="breadcrumb">2. Modify the CSharp code to allow replacing tokens within the HTML with values from the device</h3>
+                        <h3 class="breadcrumb">2. Implement a marquee on the OLED screen</h3>
                         <div>
-                            The <code>program.cs</code> file is where the <code>WebServer</code> class is instantiated. It is this class that handles the HTTP
-                            requests.
+                            The OLED screen can only show a little information. If you want to display text longer than a few characters, you'll have to implement
+                            scrolling on the screen.
                         </div>
                         <div>
-                            The next bonus exercise is to change the code that serves the static content files to replace the token from the previous example
-                            (<code>%%NUMBEROFREQUESTS%%</code>) with a variable from the server.
+                            Complete the implementation of the <code>Marquee</code> method in the <code>Infrastructure\Screen.cs</code> file.
                         </div>
-                        <div>
-                            Ther server should now keep a running total of the number of files it has served. When the <code>server.html</code> is requested, the server
-                            must replace the <code>%%NUMBEROFREQUESTS%%</code> token with that running total. The value does not need to update dynamically, but when
-                            then page is refreshed the most up-to-date value should be displayed.
-                        </div>
-
-                        <h3 class="breadcrumb">3. Profile the performance of serving static content files</h3>
-                        <div>
-                            For the last bonus exercise, see if you can come up with a way to measure the performance of the server when serving static content.
-                        </div>
-                        <div>
-                            See if you can find rough numbers for:
-                        </div>
-                        <div>
-                            <ul>
-                                <li>Number of requests that can be handled concurrently</li>
-                                <li>Failures per 1000 requests</li>
-                                <li>Mean kbps</li>
-                                <li>Does the size of the content files impact the results?</li>
-                                <li>How would you add caching to the webserver?</li>
-                            </ul>
+                        <div class="note">
+                            🔎 Hint: You can create a <code>Thread</code> class and use the thread to move the text
                         </div>
                     </div>
 

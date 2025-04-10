@@ -1,0 +1,49 @@
+using Iot.Device.Ssd13xx;
+using nanoFramework.Hardware.Esp32;
+using nanoFramework.Networking;
+using System;
+using System.Device.I2c;
+using System.Diagnostics;
+using System.Net.NetworkInformation;
+using System.Threading;
+
+namespace Exercise1
+{
+    public class Program
+    {
+        private static Screen screen;
+        private static string ipAddress = "0.0.0.0";
+
+        public static void Main()
+        {
+            ConfigurePins();
+            InitializeScreen();
+
+            ConnectToWiFi();
+
+            var currentDate = DateTime.UtcNow;
+            Debug.WriteLine($"You have successfully deployed your first NanoFramework application at {currentDate.ToString()}!");
+
+            screen.Write($"Started\n{currentDate.ToString()}\n{ipAddress}");
+
+            Thread.Sleep(Timeout.Infinite);
+        }
+
+        private static void ConnectToWiFi()
+        {
+            // Todo: Connect to WiFi
+        }
+
+        private static void InitializeScreen()
+        {
+            Ssd1306 oledscreen = new Ssd1306(I2cDevice.Create(new I2cConnectionSettings(1, Ssd1306.DefaultI2cAddress)), Ssd13xx.DisplayResolution.OLED128x64, DisplayOrientation.Landscape180);
+            screen = new Screen(oledscreen);
+        }
+
+        private static void ConfigurePins()
+        {
+            Configuration.SetPinFunction(Gpio.IO15, DeviceFunction.I2C1_DATA);
+            Configuration.SetPinFunction(Gpio.IO22, DeviceFunction.I2C1_CLOCK);
+        }
+    }
+}
