@@ -77,7 +77,6 @@
                         <div>
                             <ol>
                                 <li>Make sure the correct device is selected in the extension</li>
-                                <li>Make sure content files are set to copy</li>
                                 <li>F5 to run the application</li>
                             </ol>
                         </div>
@@ -92,10 +91,10 @@
 
                         <div>
                             Once this window is open, it will list all compatible devices connected to the computer (in this case, there should only be one). Select the
-                            device you wish to flash. In the example below, the device is connected to <code>COM3</code> and is an <code>ESP32_REV0</code> image.
+                            device you wish to flash. In the example below, the device is connected to <code>COM3</code> and is an <code>ESP32_REV3</code> image.
                         </div>
                         <img src="img/deviceselection.png" />
-
+<!--
                         <h3 class="breadcrumb" id="vs-step2">2. Set content files to Copy Always</h3>
 
                         <div>
@@ -111,8 +110,8 @@
                             for the file you are copying.
                         </div>
                         <img src="img/customlocation.png" />
-
-                        <h3 class="breadcrumb" id="vs-step3">3. F5 to run the application</h3>
+-->
+                        <h3 class="breadcrumb" id="vs-step3">2. F5 to run the application</h3>
 
                         <div>
                             Your application is now ready to deploy. Hit <kbd>F5</kbd> to deploy and debug your application. The Visual Studio extension will now compile
@@ -121,9 +120,10 @@
                         </div>
                         <img src="img/debugging.png" />
 
-                        <h3 class="breadcrumb" id="vs-step4">4. Success!</h3>
+                        <h3 class="breadcrumb" id="vs-step4">3. Success!</h3>
                         <div>
-                            If you managed to deploy everything successfully, you should see a new exercise waiting for you when you refresh this page!
+                            If you managed to deploy everything successfully, you should see a message in your debugger:
+                            <code>You have successfully deployed your first NanoFramework application at 01/01/1970 00:08:18</code>
                         </div>
                     </div>
 
@@ -180,13 +180,14 @@
                             </div>
                             <img src="img/deploylog.png" />
                         </div>
-                        <div>
+                        <!--<div>
                             <div>
                                 With your solution deployed, you now need to deploy the static files that will be served by the device's web server.
                             </div>
                         </div>
                         <hr/>
 
+                        
                         <h3 class="breadcrumb" id="vscode-step3">3. Add all content files to a deploy.json file</h3>
 
                         <div>
@@ -239,10 +240,11 @@
                                 Once the command has completed, your content files will be deployed on the device.
                             </div>
                         </div>
+                        -->
 
-                        <h3 class="breadcrumb" id="vscode-step5">5. Success!</h3>
+                        <h3 class="breadcrumb" id="vscode-step5">3. Success!</h3>
                         <div>
-                            If you managed to deploy everything successfully, you should see a new exercise waiting for you when you refresh this page!
+                            Congratulations! You have managed to deploy your first NanoFramework application. Now we need to make it do something!
                         </div>
                     </div>
 
@@ -253,14 +255,20 @@
                             Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
                         </div>
 
-                        <h3 class="breadcrumb">1. Add a new HTML page and make sure you can navigate to it</h3>
+                        <h3 class="breadcrumb">1. Connect to the WiFi network</h3>
                         <div>
-                            Add a new HTML page called <code>server.html</code>. The html page should be valid HTML and should contain a section that contains the
-                            text <code>%%NUMBEROFREQUESTS%%</code>. We will be replacing this value with a value that comes from the devce in the next bonus exercise.
+                            If you're using Visual Studio, you should have noticed that the date that was output by the log statement was very
+                            incorrect. In fact, you might recognise the date (01/01/1970) as one of the typical Epoch dates.
                         </div>
                         <div>
-                            Once you have added this new page and deployed it, you should be fairly confident in your understanding of how to add content files
-                            using NanoFramework.
+                            This is because the ESP32 doesn't have a real-time clock to keep track of the date.
+                        </div>
+                        <div>
+                            NanoFramework manages the date and time of devices by getting the current time once the device connects to a network with a
+                            time server.
+                        </div>
+                        <div>
+                            
                         </div>
 
                         <h3 class="breadcrumb">2. Modify the CSharp code to allow replacing tokens within the HTML with values from the device</h3>

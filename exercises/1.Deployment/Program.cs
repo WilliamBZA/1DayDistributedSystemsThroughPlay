@@ -25,8 +25,8 @@ namespace Deployment
 {
     public class Program
     {
-        private static string MySsid = "Hilton Honors";
-        private static string MyPassword = "";
+        private static string MySsid = "dropitlikeaSquat";
+        private static string MyPassword = "DaisyToddAndButt";
         private static int numberOfRequestsCurrentlyBeingServed = 0;
 
         public static void Main()
