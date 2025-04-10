@@ -1,0 +1,22 @@
+{
+  "serialport":"COM3",
+  "files": [{
+      "DestinationFilePath": "I:\\wwwroot\\index.html",
+      "SourceFilePath": ".\\wwwroot\\index.html"
+  }, {         
+      "DestinationFilePath": "I:\\wwwroot\\img\\padlock.png",
+      "SourceFilePath": ".\\wwwroot\\img\\padlock.png"
+  }, {         
+      "DestinationFilePath": "I:\\wwwroot\\favicon.ico",
+      "SourceFilePath": ".\\wwwroot\\favicon.ico"
+  }, {         
+      "DestinationFilePath": "I:\\wwwroot\\css\\bootstrap.min.css",
+      "SourceFilePath": ".\\wwwroot\\css\\bootstrap.min.css"
+  }, {         
+      "DestinationFilePath": "I:\\wwwroot\\css\\style.css",
+      "SourceFilePath": ".\\wwwroot\\css\\style.css"
+  }, {         
+      "DestinationFilePath": "I:\\wwwroot\\js\\bootstrap.bundle.min.js",
+      "SourceFilePath": ".\\wwwroot\\js\\bootstrap.bundle.min.js"
+  }]
+}
