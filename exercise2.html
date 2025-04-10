@@ -94,11 +94,11 @@
                                 <li>Write <code>PinValue.High</code> to the pin</li>
                             </ol>
                             </div>
-                            <div><pre>
-var gpioController = new GpioController(); // Create an inistance of a GpioController
-var redLed = gpioController.OpenPin(21, PinMode.Output); // Use the GpioController to open the pin
+                            <div>
+                                <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">gpioController</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">GpioController</span>();&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;an&nbsp;instance&nbsp;of&nbsp;a&nbsp;GpioController</span>
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">redLed</span>&nbsp;=&nbsp;<span style="color:#1f377f;">gpioController</span>.<span style="color:#74531f;">OpenPin</span>(21,&nbsp;<span style="color:#066555;">PinMode</span>.Output);&nbsp;<span style="color:#066555;">//&nbsp;Use&nbsp;the&nbsp;GpioController&nbsp;to&nbsp;open&nbsp;the&nbsp;pin</span>
 
-redLed.Write(PinValue.High); // Write PinValue.High to the pin</pre>
+<span style="color:#1f377f;">redLed</span>.<span style="color:#74531f;">Write</span>(<span style="color:#066555;">PinValue</span>.High);&nbsp;<span style="color:#066555;">//&nbsp;Write&nbsp;PinValue.High&nbsp;to&nbsp;the&nbsp;pin</span></pre>
                         </div>
                         <div>
                             Your first exercise is to turn the Red LED on when the device starts up.
@@ -116,6 +116,9 @@ redLed.Write(PinValue.High); // Write PinValue.High to the pin</pre>
                         <div>
                             Now see if you can toggle the LEDs every second so that the Red LED will be on for 1 second, then it will turn off and the Blue LED will be on
                             for 1 second. This should repeat indefinitely so that the Red and Blue LEDs toggle on and off.
+                        </div>
+                        <div class="note">
+                            🔎 Hint: You can use <code>Thread.Sleep(1000)</code> to wait 1 second
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step3">3. Toggle the LEDs when a button is pushed</h3>
@@ -135,12 +138,11 @@ redLed.Write(PinValue.High); // Write PinValue.High to the pin</pre>
                             </ol>
                         </div>
                         <div>
-                            <pre>
-var gpioController = new GpioController(); // Create an inistance of a GpioController
-var button = gpioController.OpenPin(22, PinMode.InputPullDown); // Use the GpioController to open the pin
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">gpioController</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">GpioController</span>();
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">button</span>&nbsp;=&nbsp;<span style="color:#1f377f;">gpioController</span>.<span style="color:#74531f;">OpenPin</span>(22,&nbsp;<span style="color:#066555;">PinMode</span>.InputPullDown);&nbsp;<span style="color:#066555;">//&nbsp;Use&nbsp;the&nbsp;GpioController&nbsp;to&nbsp;open&nbsp;the&nbsp;pin</span>
 
-button.ValueChanged += (s, e) => {
-    Console.WriteLine($"{DateTime.UtcNow} - Button Pushed");
+<span style="color:#1f377f;">button</span>.ValueChanged&nbsp;+=&nbsp;(<span style="color:#1f377f;">s</span>,&nbsp;<span style="color:#1f377f;">e</span>)&nbsp;=&gt;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span>{<span style="color:#066555;">DateTime</span>.UtcNow}<span style="color:#a31515;">&nbsp;-&nbsp;Button&nbsp;Pushed</span><span style="color:#a31515;">&quot;</span>);
 };</pre>
                         </div>
                         <div>
@@ -168,6 +170,9 @@ button.ValueChanged += (s, e) => {
                         </div>
                         <div>
                             See if you can debounce the input from your button.
+                        </div>
+                        <div class="note">
+                            🔎 Hint: There may be some properties on the GpioPin that might be useful
                         </div>
 
                         <h3 class="breadcrumb">2. Toggle the LEDs only when both buttons are pressed</h3>
