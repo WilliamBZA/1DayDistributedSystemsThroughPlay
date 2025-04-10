@@ -2,11 +2,11 @@
 
 Welcome to the ~funhouse~ workshop! This workshop is going to take you through the process of forgetting about building MicroServices, and guide you through to how to make them better Distributed Systems.
 
-We'll start with a working minimal implementation of an escape room with microservice puzzles that follow a typical naive implementation of a "microservice architecture", and see how they fail. From the failures we will see how each of the puzzles can be improved to be made more scalable and fault tolerant. We'll then explore some more advanced distrbuted systems concepts
+We'll start with a working minimal implementation of an escape room with microservice puzzles that follow a typical naive implementation of a "microservice architecture", and see how they fail. From the failures we will see how each of the puzzles can be improved to be made more scalable and fault tolerant. We'll then explore some more advanced distributed systems concepts
 
 ### This workshop is intended for:
 
-- Senior developers beginning to take steps into the world of distributed systems
+- Developers beginning to take steps into the world of distributed systems
 - Developers interested in learning IoT basics
 - Anyone that wants to learn how to make their existing microservices more scalable and fault tolerant
 
@@ -16,7 +16,7 @@ We'll start with a working minimal implementation of an escape room with microse
 - IoT basics, reading and writing
 - Triggering things through REST
 - Where REST breaks down
-- Introducing messaging via Azure
+- Introducing messaging via Azure Service Bus
 - Routing messages
 - Dealing with failures
 - Delayed delivery
@@ -31,5 +31,11 @@ This is a Bring Your Own Device (BYOD) workshop. Therefore, attendees are requir
 
 Either:
 
-* Visual Studio 2022 with the [Nanoframework extension installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html)
+* Recommended: Visual Studio 2022 with the [Nanoframework extension installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html)
 * VS Code with [Nanoframework add-on installed](https://docs.nanoframework.net/content/getting-started-guides/getting-started-vs-code.html)
+
+NOTES:
+
+* The NanoFramework does not work with Jetbrains Rider.
+* The NanoFramework extenions will not work on 32 bits OSs or ARM platforms.
+  * If you are bringing an ARM CPU machine, then you will have to have access to a cloud VM to do some parts of the workshop development. The bulk of the workshop will work on ARM CPU devices though.
