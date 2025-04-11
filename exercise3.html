@@ -72,22 +72,25 @@
                         <h3>Responding to an HTTP request</h3>
 
                         <div>
-                            We're now going to start making remote calls to our devices. For your convenience, there is a button 👇 which makes an HTTP Post to
+                            We're now going to start making remote calls to our devices. For your convenience, there is a button 👇 which makes an HTTP request to
                             <code>/api/toggleleds/</code>. Your job is to add a handler to listen to requests.
                         </div>
 
                         <div class="d-flex justify-content-center">
-                            <form action="/api/toggleleds">
-                                <button class="btn btn-info btn-lg" type="submit">
-                                    Click to Toggle LEDs
-                                </button>
-                            </form>
+                            <label for="httpRoute">
+                                Route to invoke: <input id="httpRoute" name="httpRoute" type="text" value="http://192.168.1.102/api/toggleleds" />
+                            </label>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button id="toggleLedButtons" class="btn btn-info btn-lg" type="submit">
+                                Click to Toggle LEDs
+                            </button>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step1">1. Add a LedController.cs file</h3>
                         <div>
                             The solution contains a folder named <code>Controllers</code> which contains a class called <code>FileController.cs</code>. This class
-                            is responsible for exposing HTTP methods that deal with updating files on the Sd card. We can use this as an example of how to add custom
+                            is responsible for exposing HTTP methods that deal with updating files on the device. We can use this as an example of how to add custom
                             controllers to respond to other HTTP requests.
                         </div>
                         <div>
@@ -100,24 +103,32 @@
                             method towards the end, where the <code>WebServer</code> is instantiated and configured.
                         </div>
                         <div>
-                            Note the array of Types being passed to the constructor of the <code>WebServer</code>:
+                            Note the array of Types 
+                            (<span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">Type</span>[]&nbsp;{&nbsp;<span style="color:blue;">typeof</span>(<span style="color:#066555;">FileController</span>)&nbsp;}</span>)
+                            being passed to the constructor of the <code>WebServer</code>:
                         </div>
                         <div>
-                            <code>using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(FileController) }))</code>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">using</span>&nbsp;(<span style="color:#066555;">WebServer</span>&nbsp;<span style="color:#1f377f;">server</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">WebServer</span>(80,&nbsp;<span style="color:#066555;">HttpProtocol</span>.Http,&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">Type</span>[]&nbsp;{&nbsp;<span style="color:blue;">typeof</span>(<span style="color:#066555;">FileController</span>)&nbsp;}))</pre>
                         </div>
                         <div>
-                            Add the newly created <code>LedController</code> type to this array too. Once this is done, the WebServer will look for HTTP routes to listen to.
+                            The array contains the type of
+                            <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">FileController</span></span>
+                            which is a Web Controller that NanoFramework uses to look for <strong>routes</strong> to bind to.
+                        </div>
+                        <div>
+                            Add the newly created <code>LedController</code> type to this array too. Once this is done, the WebServer will look for any routes
+                            defined in the <code>LedController</code> class to listen to.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Add a method bound to an HTTP Route</h3>
                         <div>
                             Add the following code to the <code>LedController</code> class:
 
-                            <pre>[Method("POST")]
-[Route("/api/toggleleds")]
-public void ToggleLeds()
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;">[<span style="color:#066555;">Route</span>(<span style="color:#a31515;">&quot;api/toggleleds&quot;</span>)]
+[<span style="color:#066555;">Method</span>(<span style="color:#a31515;">&quot;POST&quot;</span>)]
+<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ToggleLeds</span>(<span style="color:#066555;">WebServerEventArgs</span>&nbsp;<span style="color:#1f377f;">e</span>)
 {
-
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">WebServer</span>.<span style="color:#74531f;">OutputHttpCode</span>(<span style="color:#1f377f;">e</span>.Context.Response,&nbsp;<span style="color:#066555;">HttpStatusCode</span>.OK);
 }</pre>
                         </div>
 
@@ -147,7 +158,16 @@ public void ToggleLeds()
                         <h3 class="breadcrumb">1. Trigger a LED toggle on someone else's device</h3>
                         <div>
                             Pair up with someone who has completed their exercises too. Find the IP Address of their device. See if you can make your <code>LedController</code>'s
-                            <code>ToggleLeds</code> method make an HTTP POST Request to your partner's device.
+                            <code>ToggleLeds</code> method make an HTTP Request to your partner's device.
+                        </div>
+                        <div>
+                            You can start with the code:
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;">[<span style="color:#066555;">Route</span>(<span style="color:#a31515;">&quot;api/toggleremoteleds&quot;</span>)]
+[<span style="color:#066555;">Method</span>(<span style="color:#a31515;">&quot;POST&quot;</span>)]
+<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ToggleTemoteLeds</span>(<span style="color:#066555;">WebServerEventArgs</span>&nbsp;<span style="color:#1f377f;">e</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">WebServer</span>.<span style="color:#74531f;">OutputHttpCode</span>(<span style="color:#1f377f;">e</span>.Context.Response,&nbsp;<span style="color:#066555;">HttpStatusCode</span>.OK);
+}</pre>
                         </div>
                         <div>
                             You will have to create an instance of an <code>HttpWebRequest</code> to make a remote HTTP call. There is a sample showing how to do That
@@ -160,7 +180,10 @@ public void ToggleLeds()
                             every second.
                         </div>
                         <div>
-                            Take note of how many times the request fails.
+                            Does the request ever fail? Take note of how many times the request fails.
+                        </div>
+                        <div class="note">
+                            🔎 Hint: You can use a <code>Thread</code> to run outside of the main application loop.
                         </div>
                     </div>
                     <div class="footer-nav">
@@ -170,6 +193,17 @@ public void ToggleLeds()
             </div>
         </div>
     </div>
+
+    <script>
+        const httpRoute = document.getElementById("httpRoute");
+        document.getElementById("toggleLedButtons").addEventListener("click", async (event) => {
+            const route = httpRoute.value;
+
+            const response = await fetch(route, {
+                method: "POST"
+            });
+        });
+    </script>
 
     <script src="js/bootstrap.bundle.min.js"></script>
 </body>

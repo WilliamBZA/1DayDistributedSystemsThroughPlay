@@ -1,6 +1,7 @@
 using Iot.Device.Ssd13xx;
 using nanoFramework.Hardware.Esp32;
 using nanoFramework.Networking;
+using nanoFramework.WebServer;
 using System;
 using System.Device.Gpio;
 using System.Device.I2c;
@@ -8,7 +9,7 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading;
 
-namespace Exercise2
+namespace Exercise3
 {
     public class Program
     {
@@ -26,15 +27,14 @@ namespace Exercise2
             var currentDate = DateTime.UtcNow;
             Debug.WriteLine($"You have successfully deployed your first NanoFramework application at {currentDate.ToString()}!");
 
-            screen.Write($"Started\n{currentDate.ToString()}\n{ipAddress}");
+            using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(FileController) }))
+            {
+                server.Start();
 
-            //while (true)
-            //{
-            //    blueLed.Toggle();
-            //    Thread.Sleep(1000);
-            //}
+                screen.Write($"Started\n{currentDate.ToString()}\n{ipAddress}");
 
-            Thread.Sleep(Timeout.Infinite);
+                Thread.Sleep(Timeout.Infinite);
+            }
         }
 
         private static void ConnectToWiFi()

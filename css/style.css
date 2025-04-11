@@ -32,6 +32,10 @@ body > div > div {
     background-color: var(--bs-body-bg);
 }
 
+input {
+    min-width: 400px;
+}
+
 h3.breadcrumb {
     margin: 1em 0;
     font-size: x-large;
