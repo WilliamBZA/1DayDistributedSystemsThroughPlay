@@ -1,14 +1,16 @@
 using Iot.Device.Ssd13xx;
 using nanoFramework.Hardware.Esp32;
 using nanoFramework.Networking;
+using nanoFramework.WebServer;
 using System;
 using System.Device.Gpio;
 using System.Device.I2c;
 using System.Diagnostics;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 
-namespace Exercise2
+namespace Exercise3
 {
     public class Program
     {
@@ -26,20 +28,33 @@ namespace Exercise2
             var currentDate = DateTime.UtcNow;
             Debug.WriteLine($"You have successfully deployed your first NanoFramework application at {currentDate.ToString()}!");
 
-            screen.Write($"Started\n{currentDate.ToString()}\n{ipAddress}");
+            using (WebServer server = new WebServer(80, HttpProtocol.Http, new Type[] { typeof(FileController), typeof(LedController) }))
+            {
+                server.Start();
 
-            //while (true)
-            //{
-            //    blueLed.Toggle();
-            //    Thread.Sleep(1000);
-            //}
+                screen.Write($"Started\n{currentDate.ToString()}\n{ipAddress}");
 
-            Thread.Sleep(Timeout.Infinite);
+                while (true)
+                {
+                    Thread.Sleep(1000);
+
+                    ToggleRemoteLeds();
+                }
+            }
+        }
+
+        private static void ToggleRemoteLeds()
+        {
+            // replace IP address with other device's IP
+            using var request = WebRequest.Create("http://192.168.1.113/api/toggleleds");
+            request.Method = "GET";
+
+            using var response = request.GetResponse();
         }
 
         private static void ConnectToWiFi()
         {
-            var connected = WifiNetworkHelper.ConnectDhcp("introtomessaging", "IsY2TPxx0TI9");
+            var connected = WifiNetworkHelper.ConnectDhcp("introtomessaging", "IsY2TPxx0TI9", requiresDateTime: true);
             if (connected)
             {
                 ipAddress = IPGlobalProperties.GetIPAddress().ToString();
@@ -96,7 +111,7 @@ namespace Exercise2
             redLed.Write(PinValue.Low);
         }
 
-        private static void ToggleLEDs()
+        public static void ToggleLEDs()
         {
             redLed.Toggle();
             blueLed.Toggle();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Device.Gpio;
 using System.Text;
 
-namespace Exercise2
+namespace Exercise3
 {
     public class TrackedGpioPin(GpioPin pin, bool isHigh = false)
     {
