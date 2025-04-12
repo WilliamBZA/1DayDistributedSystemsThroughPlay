@@ -8,22 +8,25 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{11A8DD76-328B-46DF-9F39-F559912D0360};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>bc93ad38-911c-445d-b06b-05b0580d57aa</ProjectGuid>
+    <ProjectGuid>67a600f1-d899-4236-992b-2485aae1da6b</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <RootNamespace>Exercise3</RootNamespace>
-    <AssemblyName>Exercise3</AssemblyName>
+    <RootNamespace>Exercise4</RootNamespace>
+    <AssemblyName>Exercise4</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <LangVersion>13.0</LangVersion>
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
-    <Compile Include="Controllers\LedController.cs" />
     <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Controllers\LedController.cs" />
+    <Compile Include="Handlers\LedHandlers.cs" />
     <Compile Include="Infrastructure\BasicFont.cs" />
     <Compile Include="Infrastructure\Screen.cs" />
     <Compile Include="Infrastructure\TrackedGpioPin.cs" />
+    <Compile Include="Messages\LEDsToggled.cs" />
+    <Compile Include="Messages\ToggleLEDs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
