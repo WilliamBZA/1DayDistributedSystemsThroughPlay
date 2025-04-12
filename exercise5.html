@@ -136,7 +136,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">senderToNanoFramework</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>);
 
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;sender&nbsp;for&nbsp;second&nbsp;queue,&nbsp;i.e.&nbsp;the&nbsp;second&nbsp;console&nbsp;application&nbsp;you&nbsp;just&nbsp;created</span>
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">senderToConsoleApp</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinvirtualdevice&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">senderToSecondConsoleApp</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinvirtualdevice&quot;</span>);
 
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;a&nbsp;message</span>
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">toggleMessage</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ToggleLEDs</span>
@@ -154,7 +154,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Send&nbsp;message&nbsp;to&nbsp;both&nbsp;queues&nbsp;separately</span>
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">senderToNanoFramework</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:#1f377f;">message</span>);
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">senderToConsoleApp</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">message</span>.Body));
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">senderToSecondReceiverConsoleApp</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">message</span>.Body));
 
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Message&nbsp;sent&nbsp;to&nbsp;both&nbsp;queues!&quot;</span>);
 }
@@ -235,6 +235,40 @@
                             Modify your sender to use a transaction: In your sender app, replace the separate <code>SendMessageAsync</code> calls with code that uses a <code>ServiceBusTransaction</code>.
                         </div>
                         <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">//&nbsp;Create&nbsp;sender&nbsp;for&nbsp;the&nbsp;first&nbsp;queue,&nbsp;i.e.&nbsp;the&nbsp;device&nbsp;queue</span>
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">senderToNanoFramework</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>);
+
+<span style="color:#066555;">//&nbsp;Create&nbsp;sender&nbsp;for&nbsp;second&nbsp;queue,&nbsp;i.e.&nbsp;the&nbsp;second&nbsp;console&nbsp;application&nbsp;you&nbsp;just&nbsp;created</span>
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">senderToSecondReceiverConsoleApp</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinvirtualdevice&quot;</span>);
+
+<span style="color:#066555;">//&nbsp;Create&nbsp;a&nbsp;message</span>
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">toggleMessage</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ToggleLEDs</span>
+{
+&nbsp;&nbsp;&nbsp;&nbsp;ToggleSource&nbsp;=&nbsp;<span style="color:#a31515;">&quot;Console&nbsp;Application&quot;</span>
+};
+<span style="color:blue;">string</span>&nbsp;<span style="color:#1f377f;">jsonMessage</span>&nbsp;=&nbsp;<span style="color:#066555;">JsonSerializer</span>.<span style="color:#74531f;">Serialize</span>(<span style="color:#1f377f;">toggleMessage</span>);
+
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">message</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">jsonMessage</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;ContentType&nbsp;=&nbsp;<span style="color:#a31515;">&quot;application/json&quot;</span>
+};
+
+<span style="color:blue;">using</span>&nbsp;(<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">transaction</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">TransactionScope</span>(<span style="color:#066555;">TransactionScopeAsyncFlowOption</span>.Enabled))
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">senderToNanoFramework</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:#1f377f;">message</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">senderToSecondReceiverConsoleApp</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#1f377f;">message</span>.Body));
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">transaction</span>.<span style="color:#74531f;">Complete</span>();
+}</pre>
+                        </div>
+                        <div>
+                            You can now test the transactionality by simulating a failure (e.g. by throwing an exception before the call to <code>transaction.Complete();</code>) and verifying that no messages are sent if the transaction fails.
+                        </div>
+                        <div>
+                            We can use transactions not only for sending multiple messages, but we can make sure that we <code>Complete</code> the incoming message in sync with the
+                            outgoing messages. Like this:
+                        </div>
+                        <div>
                             <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">sender1</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>);
 <span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">sender2</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinconsoledevice&quot;</span>);
 <span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">receiver</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateReceiver</span>(<span style="color:#a31515;">&quot;incomingqueue&quot;</span>);
@@ -247,12 +281,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">sender1</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>());
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">sender2</span>.<span style="color:#74531f;">SendMessageAsync</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>());
 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;The&nbsp;incoming&nbsp;message&nbsp;will&nbsp;be&nbsp;accepted&nbsp;at&nbsp;the</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;same&nbsp;time&nbsp;that&nbsp;the&nbsp;2&nbsp;outgoing&nbsp;messages&nbsp;are&nbsp;sent</span>
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">transaction</span>.<span style="color:#74531f;">Complete</span>();
 }
-</pre>
-                        </div>
-                        <div>
-                            You can now test the transactionality by simulating a failure (e.g. by throwing an exception before the call to <code>transaction.Complete();</code>) and verifying that no messages are sent if the transaction fails.
+
+<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Message&nbsp;sent&nbsp;to&nbsp;both&nbsp;queues!&quot;</span>);</pre>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step4">4. Add a Topic to Azure Service Bus</h3>
@@ -323,7 +357,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;sender&nbsp;for&nbsp;the&nbsp;topic</span>
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Use&nbsp;your&nbsp;team&#39;s&nbsp;topic&nbsp;as&nbsp;the&nbsp;name</span>
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">topicSender</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;thedriveinteamnameledtoggletopic&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">topicSender</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateSender</span>(<span style="color:#a31515;">&quot;TheDriveInLedToggleTopic&quot;</span>);
 
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Create&nbsp;a&nbsp;message</span>
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">toggleMessage</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ToggleLEDs</span>

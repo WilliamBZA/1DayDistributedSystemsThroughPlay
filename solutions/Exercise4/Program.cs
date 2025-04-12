@@ -1,5 +1,4 @@
 using Amqp;
-using Exercise4.Handlers;
 using Iot.Device.Ssd13xx;
 using nanoFramework.Hardware.Esp32;
 using nanoFramework.Json;
@@ -47,7 +46,7 @@ namespace Exercise4
 
         private static void StartServiceBusReceiver()
         {
-            var connection = new Connection(new Address("connection string here"));
+            var connection = new Connection(new Address("amqp connection string"));
             var session = new Session(connection);
             var receiverLink = new ReceiverLink(session, "Esp32 receiver Link", "thedrivein");
             var sender = new SenderLink(session, "ESP32 sender link", "thedriveinconsole");
@@ -88,6 +87,7 @@ namespace Exercise4
             if (connected)
             {
                 ipAddress = IPGlobalProperties.GetIPAddress().ToString();
+                Console.WriteLine($"Connected to WiFi. IP Address {ipAddress}");
             }
             else
             {
