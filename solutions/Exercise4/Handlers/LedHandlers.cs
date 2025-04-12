@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Exercise4.Handlers
+namespace Exercise4
 {
     public class LedHandlers(TrackedGpioPin redLed, TrackedGpioPin blueLed)
     {
@@ -22,7 +22,7 @@ namespace Exercise4.Handlers
             outgoingMessage.ApplicationProperties = new ApplicationProperties();
             outgoingMessage.ApplicationProperties["MessageType"] = "LEDsToggled";
 
-            sender.Send(outgoingMessage);
+            sender.Send(outgoingMessage, null, null);
         }
     }
 }
