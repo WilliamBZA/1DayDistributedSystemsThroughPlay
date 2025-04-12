@@ -142,9 +142,9 @@
                             The <code>ToggleLEDs</code> class should look like this:
                         </div>
                         <div>
-                            <pre>public class ToggleLEDs
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">public</span>&nbsp;<span style="color:blue;">class</span>&nbsp;<span style="color:#066555;">ToggleLEDs</span>
 {
-    public string ToggleSource { get; set; }
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">string</span>&nbsp;ToggleSource&nbsp;{&nbsp;<span style="color:blue;">get</span>;&nbsp;<span style="color:blue;">set</span>;&nbsp;}
 }</pre>
                         </div>
                         <div>
@@ -202,7 +202,7 @@
 
                             <ol>
                                 <li>Connecting to the Service Bus using the AMQP connection string as a parameter in the constructor for a <code>Connection</code> class</li>
-                                <li>Creating a new instance of a <code>Session</code> from the connection instance</li>
+                                <li>Creating a new instance of a <code>Session</code> class, by passing the connection into it's constructor</li>
                                 <li>Creating a <code>ReceiverLink</code> with the session, link name (anything descriptive), and the queue name</li>
                                 <li>Receive a <code>Message</code> by calling the <code>.Receive()</code> method on the <code>ReceiverLink</code> instance</li>
                             </ol>
@@ -245,9 +245,22 @@
                             and action. Here is what an action version would look like:
                         </div>
                         <div>
-                            <pre>receiverLink.Start(5, (receiver, message) =>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#1f377f;">receiverLink</span>.<span style="color:#74531f;">Start</span>(5,&nbsp;(<span style="color:#1f377f;">receiver</span>,&nbsp;<span style="color:#1f377f;">message</span>)&nbsp;=&gt;
 {
-  // process message here
+
+});</pre>
+                        </div>
+                        <div>
+                            Once we've received the message, we need to tell Azure Service Bus that we've successfully processed the message. To do this, call
+                            <code>Accept</code> on the <code>receiver</code> inside the onMessage callback.
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#1f377f;">receiverLink</span>.<span style="color:#74531f;">Start</span>(5,&nbsp;(<span style="color:#1f377f;">receiver</span>,&nbsp;<span style="color:#1f377f;">message</span>)&nbsp;=&gt;
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Toggle&nbsp;the&nbsp;LEDs&nbsp;here</span>
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Accept&nbsp;the&nbsp;message,&nbsp;telling&nbsp;Azure&nbsp;it&nbsp;can&nbsp;be&nbsp;removed&nbsp;from&nbsp;the&nbsp;queue</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">receiver</span>.<span style="color:#74531f;">Accept</span>(<span style="color:#1f377f;">message</span>);
 });</pre>
                         </div>
                         <div>
