@@ -432,6 +432,16 @@
                             Azure Service Bus has a size limit per batch (including headers), so this is a great chance to see that in action. The size limit is <strong>256KB</strong> for Standard tier, and <strong>1MB</strong>
                             for Premium tier.
                         </div>
+
+                        <h3 class="breadcrumb">5. Change the NanoFramework application to be aware of Message Types</h3>
+                        <div>
+                            The NanoFramework API might not have the ability to configure things like prefetch counts, but it does allow us to specify
+                            <code>ApplicationProperties</code> so we can use that to determine the message types.
+                        </div>
+                        <div>
+                            Change your NanoFramework application to be able to respond to both the <code>ToggleLEDs</code> message as well as the
+                            <code>TurnLEDsOn</code> message.
+                        </div>
                     </div>
                     <div class="footer-nav">
                         <a href="exercise6.html">&lt; Go to Exercise 6</a><a href="exercise8.html">Go to Exercise 8 &gt;</a>
