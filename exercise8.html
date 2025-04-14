@@ -104,7 +104,7 @@
                             Change your receiver to use <code>ReceiveMode.ReceiveAndDelete</code>, and send a message that fails when processing.
                         </div>
                         <div>
-                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">receiver</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateReceiver</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>,&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusReceiverOptions</span>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">processor</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateProcessor</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>,&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusReceiverOptions</span>
 {
 &nbsp;&nbsp;&nbsp;&nbsp;ReceiveMode&nbsp;=&nbsp;<span style="color:#066555;">ServiceBusReceiveMode</span>.ReceiveAndDelete
 });
@@ -147,13 +147,23 @@
                             For this test, make sure it's set to <strong>1 Minute</strong>.
                         </div>
                         <div>
+                            And set the max auto lock renewal to a really low value, like 10 seconds:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">processor</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateProcessor</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>,&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusProcessorOptions</span>
+{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MaxAutoLockRenewalDuration&nbsp;=&nbsp;<span style="color:#066555;">TimeSpan</span>.<span style="color:#74531f;">FromSeconds</span>(10),
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MaxConcurrentCalls&nbsp;=&nbsp;10
+});</pre>
+                        </div>
+                        <div>
                             Now change your message handler to take 75 seconds - longer than the lock duration:
                         </div>
                         <div>
-                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#066555;">Task</span>&nbsp;<span style="color:#74531f;">HandleToggleLEDs</span>(<span style="color:#066555;">BinaryData</span>&nbsp;<span style="color:#1f377f;">body</span>)
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">private</span>&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#066555;">Task</span>&nbsp;<span style="color:#74531f;">HandleToggleLEDs</span>()
 {
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Starting&nbsp;long&nbsp;processing...&quot;</span>);
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#066555;">Task</span>.<span style="color:#74531f;">Delay</span>(<span style="color:#066555;">TimeSpan</span>.<span style="color:#74531f;">FromSeconds</span>(75));
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#066555;">Task</span>.<span style="color:#74531f;">Delay</span>(<span style="color:#066555;">TimeSpan</span>.<span style="color:#74531f;">FromSeconds</span>(135));
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Finished!&quot;</span>);
 }
 </pre>
@@ -248,7 +258,7 @@
 
                         <h3 class="breadcrumb">1. What happens when lock renewal fails?</h3>
                         <div>
-                            Enable <code>MaxAutoLockRenewalDuration</code> and simulate a temporary network failure in your handler after the first few seconds.
+                            Enable <code>MaxAutoLockRenewalDuration</code> and simulate a temporary network failure (disconnect from the WiFi) in your handler after the first few seconds.
                             <ul>
                                 <li>Does the lock still get renewed?</li>
                                 <li>What kind of exceptions do you see (if any)?</li>
