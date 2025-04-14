@@ -1,5 +1,8 @@
 ﻿using Azure.Messaging.ServiceBus;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Exercise7ConsoleReceiver
 {
@@ -41,13 +44,31 @@ namespace Exercise7ConsoleReceiver
             var numberOfMessagesProcessed = 0;
             processor.ProcessMessageAsync += async args =>
             {
-                var body = args.Message.Body.ToString();
-                Console.WriteLine($"Received: {body}");
-
                 if (++numberOfMessagesProcessed == 100)
                 {
                     stopWatch.Stop();
                     Console.WriteLine($"It took {stopWatch.ElapsedMilliseconds}ms to process 100 messages...");
+                }
+
+                var contentType = args.Message.ContentType;
+                var body = args.Message.Body;
+
+                var messageType = args.Message.ApplicationProperties["MessageType"].ToString();
+                switch (messageType)
+                {
+                    case "ToggleLEDs":
+                        var orderCreated = JsonSerializer.Deserialize<ToggleLEDs>(body);
+                        Console.WriteLine($"LEDs should be toggled");
+                        break;
+
+                    case "TurnLEDsOn":
+                        var inventoryAdjusted = JsonSerializer.Deserialize<TurnLEDsOn>(body);
+                        Console.WriteLine($"Turn LEDs on");
+                        break;
+
+                    default:
+                        Console.WriteLine("Unknown message type.");
+                        break;
                 }
 
                 await args.CompleteMessageAsync(args.Message);

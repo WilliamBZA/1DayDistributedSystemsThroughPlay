@@ -232,6 +232,126 @@
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. Serialization and Deserialization</h3>
+                        <div>
+                            Serialization and deserialization are key steps when sending and receiving data across processes. Doing these steps correctly
+                            ensures your messages are accurate, easier to debug, and simpler to handle. So far we've pretty much hand-waved most Serialization
+                            concerns away. Let's dig a little deeper into it.
+                        </div>
+                        <div>
+                            JSON is a popular format, and one that's easy enough to use with the built-in c# types. There are other options though, and if we're integrating with
+                            other systems we might not always be in control of what Serialization format is being used. So how do we deserialize messages from multiple formats?
+                        </div>
+                        <div>
+                            Well first of all, we need a way of know what format is being used. When we use Azure Service Bus, we can set the <code>ContentType</code>
+                            property before sending the message. This allows us to include information about the serialization type that has been used in the message.
+                            When we read the message, we can check the <code>ContentType</code> property to see what serialization format has been used.
+
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#1f377f;">processor</span>.ProcessMessageAsync&nbsp;+=&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#1f377f;">args</span>&nbsp;=&gt;
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">body</span>&nbsp;=&nbsp;<span style="color:#1f377f;">args</span>.Message.Body.<span style="color:#74531f;">ToString</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">contentType</span>&nbsp;=&nbsp;<span style="color:#1f377f;">args</span>.Message.ContentType;
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">args</span>.<span style="color:#74531f;">CompleteMessageAsync</span>(<span style="color:#1f377f;">args</span>.Message);
+};</pre>
+                        </div>
+                        <div class="note">
+                            ⚠️ Not all message queueing technologies support things like <code>ApplicationProperties</code> or headers. For example: Azure Storage Queues
+                            do not have message headers. If you are using a queueing technology that doesn't support this, you will have to decide on an envelope
+                            format that includes headers in a known format that you can use to identify the actual body of the message.
+                        </div>
+                        <div>
+                            Once we know the serialization format that was used, we can deserialize the message based on that value:
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#1f377f;">processor</span>.ProcessMessageAsync&nbsp;+=&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#1f377f;">args</span>&nbsp;=&gt;
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">contentType</span>&nbsp;=&nbsp;<span style="color:#1f377f;">args</span>.Message.ContentType;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">body</span>&nbsp;=&nbsp;<span style="color:#1f377f;">args</span>.Message.Body;
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">switch</span>&nbsp;(<span style="color:#1f377f;">contentType</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">case</span>&nbsp;<span style="color:#a31515;">&quot;application/json&quot;</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">jsonObj</span>&nbsp;=&nbsp;<span style="color:#066555;">JsonSerializer</span>.<span style="color:#74531f;">Deserialize</span>&lt;<span style="color:#066555;">JsonObject</span>&gt;(<span style="color:#1f377f;">body</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">JSON&nbsp;object&nbsp;received</span><span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">case</span>&nbsp;<span style="color:#a31515;">&quot;application/xml&quot;</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">xmlSerializer</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">XmlSerializer</span>(<span style="color:blue;">typeof</span>(<span style="color:#066555;">XmlObject</span>));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">using</span>&nbsp;(<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">stream</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">MemoryStream</span>(<span style="color:#1f377f;">body</span>.<span style="color:#74531f;">ToArray</span>()))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">xmlObj</span>&nbsp;=&nbsp;<span style="color:#1f377f;">xmlSerializer</span>.<span style="color:#74531f;">Deserialize</span>(<span style="color:#1f377f;">stream</span>)&nbsp;<span style="color:blue;">as</span>&nbsp;<span style="color:#066555;">XmlObject</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">XML&nbsp;object&nbsp;received</span><span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">case</span>&nbsp;<span style="color:#a31515;">&quot;application/protobuf&quot;</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">protobufObj</span>&nbsp;=&nbsp;<span style="color:#066555;">ProtobufObject</span>.Parser.<span style="color:#74531f;">ParseFrom</span>(<span style="color:#1f377f;">body</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Protobuf&nbsp;object&nbsp;received</span><span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">default</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Unknown&nbsp;content&nbsp;type.&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">args</span>.<span style="color:#74531f;">CompleteMessageAsync</span>(<span style="color:#1f377f;">args</span>.Message);
+};</pre>
+                        </div>
+                        <div>
+                            Change your code to be able to support either XML messages or JSON messages.
+                        </div>
+
+                        <h3 class="breadcrumb">6. Dealing with different message types</h3>
+                        <div>
+                            Sometimes, messages of different logical types (e.g., <code>OrderCreated</code>, <oode>OrderUpdated</oode>, <code>InventoryAdjusted</code>) may arrive.
+                            You'll want to identify the message type along with the serialization format.
+                        </div>
+                        <div>
+                            Let's use a similar technique for tracking the message type. We want to include a header that tells us what the object type is.
+                            For the <code>ContentType</code> there was a convenient property we could use, but there is no <code>MessageType</code> property that
+                            we can use.
+                        </div>
+                        <div>
+                            So for this, let's use <code>ApplicationProperties</code>. These are custom properties that we can attach to our Azure Service Bus messages
+                            to include metadata associated with our messages. Metadata such as the object type.
+                        </div>
+                        <div>
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">messageType</span>&nbsp;=&nbsp;<span style="color:#1f377f;">args</span>.Message.ApplicationProperties[<span style="color:#a31515;">&quot;MessageType&quot;</span>].<span style="color:#74531f;">ToString</span>();
+<span style="color:#8f08c4;">switch</span>&nbsp;(<span style="color:#1f377f;">messageType</span>)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">case</span>&nbsp;<span style="color:#a31515;">&quot;OrderCreated&quot;</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">orderCreated</span>&nbsp;=&nbsp;<span style="color:#066555;">JsonSerializer</span>.<span style="color:#74531f;">Deserialize</span>&lt;<span style="color:#066555;">OrderCreated</span>&gt;(<span style="color:#1f377f;">body</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Order&nbsp;Created:&nbsp;</span>{<span style="color:#1f377f;">orderCreated</span>.OrderId}<span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">case</span>&nbsp;<span style="color:#a31515;">&quot;InventoryAdjusted&quot;</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">inventoryAdjusted</span>&nbsp;=&nbsp;<span style="color:#066555;">JsonSerializer</span>.<span style="color:#74531f;">Deserialize</span>&lt;<span style="color:#066555;">InventoryAdjusted</span>&gt;(<span style="color:#1f377f;">body</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Inventory&nbsp;Adjusted:&nbsp;</span>{<span style="color:#1f377f;">inventoryAdjusted</span>.ProductId}<span style="color:#a31515;">,&nbsp;New&nbsp;Quantity:&nbsp;</span>{<span style="color:#1f377f;">inventoryAdjusted</span>.Quantity}<span style="color:#a31515;">&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">default</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Unknown&nbsp;message&nbsp;type.&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
+}</pre>
+                        </div>
+                    </div>
+                    <div>
+                        Change your solution to be able to deserialize 2 message types:
+                        <ul>
+                            <li><code>ToggelLEDs</code></li>
+                            <li><code>TurnLEDsOn</code></li>
+                        </ul>
+                    </div>
+                    <div>
+                        Where <code>TurnLEDsOn</code> looks like this:
+                    </div>
+                    <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">public</span>&nbsp;<span style="color:blue;">class</span>&nbsp;<span style="color:#066555;">TurnLEDsOn</span>
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ShouldRedBeOn&nbsp;{&nbsp;<span style="color:blue;">get</span>;&nbsp;<span style="color:blue;">set</span>;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ShouldBlueBeOn&nbsp;{&nbsp;<span style="color:blue;">get</span>;&nbsp;<span style="color:blue;">set</span>;&nbsp;}
+}</pre>
+                    <div>
+                        Then change your sender to send both of these message types and make sure that your deserialization works as expected.
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
