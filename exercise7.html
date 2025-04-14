@@ -75,7 +75,10 @@
                             using tools like concurrency, batching, and prefetching.
                         </div>
                         <div>
-                            We're going to look at three levers that can help you crank up your throughput without compromising reliability:
+                            We'll begin by moving away from explicit calls to <code>ReceiveMessageAsync</code>, moving towards a message processing pipeline instead.
+                        </div>
+                        <div>
+                            After that, we'll look at three levers that can help us crank up our throughput without compromising reliability:
                             <ul>
                                 <li><strong>Concurrency</strong> - process more than one message at a time.</li>
                                 <li><strong>Batching</strong> - handle several messages together to reduce overhead.</li>
@@ -83,7 +86,63 @@
                             </ul>
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step1">1. Increase Message Concurrency</h3>
+                        <h3 class="breadcrumb" id="vs-step1">1. Message Processor</h3>
+                        <div>
+                            In earlier exercises, you've been using an instance of ServiceBusReceiver to explicitly receive and handle messages.
+                            While this gives you direct control, it can also add complexity and overhead to your code.
+                        </div>
+                        <div>
+                            The Azure Service Bus SDK provides a higher-level abstraction called <code>ServiceBusProcessor</code> that simplifies message handling significantly.
+                        </div>
+                        <div>
+                            Here's a simple example of setting up a <code>ServiceBusProcessor</code>:
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">client</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusClient</span>(<span style="color:#a31515;">&quot;connection&nbsp;string&quot;</span>);
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">processor</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateProcessor</span>(<span style="color:#a31515;">&quot;thedriveinvirtualdevice&quot;</span>);
+
+<span style="color:#1f377f;">processor</span>.ProcessMessageAsync&nbsp;+=&nbsp;<span style="color:blue;">async</span>&nbsp;<span style="color:#1f377f;">args</span>&nbsp;=&gt;
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">body</span>&nbsp;=&nbsp;<span style="color:#1f377f;">args</span>.Message.Body.<span style="color:#74531f;">ToString</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span><span style="color:#a31515;">Received:&nbsp;</span>{<span style="color:#1f377f;">body</span>}<span style="color:#a31515;">&quot;</span>);
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">args</span>.<span style="color:#74531f;">CompleteMessageAsync</span>(<span style="color:#1f377f;">args</span>.Message);
+};
+
+<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">processor</span>.<span style="color:#74531f;">StartProcessingAsync</span>();</pre>
+                        </div>
+                        <div>
+                            A core difference is that we're no longer receiving and processing messages directly, and instead we use an event model to execute code
+                            when a message is ready for processing. This is the first step allowing us to tweak things like concurrency, batching, and prefetching.
+                        </div>
+                        <div>
+                            <h5>Benefits of Using ServiceBusProcessor:</h5>
+                        </div>
+                        <div>
+                            <ul>
+                                <li><strong>Automatic Message Handling</strong> - The processor automatically receives messages from your queue or subscription, removing the need for explicit polling or receiving calls.</li>
+                                <li><strong>Built-in Concurrency and Scaling</strong> - Easily manage concurrent message processing by setting <code>MaxConcurrentCalls</code>, allowing your application to handle multiple messages simultaneously without manual threading management.</li>
+                                <li><strong>Simplified Error Handling</strong> - The processor includes built-in error handling. You define error handlers, and the processor ensures errors are caught and appropriately managed, helping prevent message loss or duplication. This is limited though, so we'll stick with Polly instead</li>
+                                <li><strong>Integrated Message Completion and Settlement</strong> - The processor automatically manages message settlement operations like <code>Complete</code>, <code>Abandon</code>, and <code>DeadLetter</code>. You just implement your logic within provided callbacks.</li>
+                                <li><strong>Easier Maintenance and Readability</strong> - Your code becomes cleaner, easier to maintain, and more readable by leveraging event-driven callbacks rather than explicit message handling loops.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            Before using a processor, take your current code that calls <code>ReceiveMessageAsync()</code> and add a stopwatch to it. Process 100 messages
+                            and see how long it takes. Mine took <code>It took 34844ms to process 100 messages</code> to process 100 messages when calling
+                            <code>ReceiveMessageAsync</code> explicitly.
+                        </div>
+                        <div>
+                            After you've measured how long it took, convert your code over to use a <code>ServiceBusProcessor</code> and measure how long it takes to
+                            process 100 messages. Mine took <code>It took 68456ms to process 100 messages</code>.
+                        </div>
+                        <div>
+                            Wait, this took longer than calling <code>ReceiveMessageAsync</code>? What gives?
+                        </div>
+                        <div>
+                            Well, that's because we haven't changed any of the default settings for the <code>ServiceBusProcessor</code> yet. Let's start with concurrency...
+                        </div>
+
+                        <h3 class="breadcrumb" id="vs-step2">2. Increase Message Concurrency</h3>
                         <div>
                             The Azure SDK has a default concurrency of 1 when receiving messages. This means that by default, your message processor handles <strong>one</strong>
                             message at a time. That's safe, but slow. Azure Service Bus supports parallel message handling using the <code>MaxConcurrentCalls</code> property.
@@ -91,7 +150,7 @@
 {
 &nbsp;&nbsp;&nbsp;&nbsp;MaxConcurrentCalls&nbsp;=&nbsp;10
 };
-<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">processor</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateProcessor</span>(<span style="color:#a31515;">&quot;thedrivein&quot;</span>,&nbsp;<span style="color:#1f377f;">serviceBusOptions</span>);
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">processor</span>&nbsp;=&nbsp;<span style="color:#1f377f;">client</span>.<span style="color:#74531f;">CreateProcessor</span>(<span style="color:#a31515;">&quot;thedriveinvirtualdevice&quot;</span>,&nbsp;<span style="color:#1f377f;">serviceBusOptions</span>);
 </pre>
                         </div>
                         <div>
@@ -122,7 +181,7 @@
                             Even better if you track CPU usage and memory too!
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step2">2. Prefetching</h3>
+                        <h3 class="breadcrumb" id="vs-step3">3. Prefetching</h3>
                         <div>
                             Every time your app fetches a message from Azure Service Bus, it makes a network call. That doesn't take long, but if you're
                             processing a lot of messages, it adds up fast. Prefetching helps by grabbing a bunch of messages up front and keeping them ready in memory.
@@ -142,7 +201,7 @@
                             things slow down or you're seeing lock timeouts, it might be too hig
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step3">3. Batching</h3>
+                        <h3 class="breadcrumb" id="vs-step4">4. Batching</h3>
                         <div>
                             Batching messages isn't a huge factor when using the ServiceBusProcessor, since it handles one message at a time internally.
                             But it's still worth understanding especially if you're ever sending messages or using the lower-level <code>ServiceBusReceiver</code>.
@@ -171,6 +230,8 @@
                             Try change your console application that generates 100 messages to use batches. Is there a noticable difference in how long
                             it takes to send 100 messages?
                         </div>
+
+                        <h3 class="breadcrumb" id="vs-step5">5. Serialization and Deserialization</h3>
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
