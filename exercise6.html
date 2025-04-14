@@ -267,7 +267,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">catch</span>&nbsp;(<span style="color:#066555;">Exception</span>&nbsp;<span style="color:#1f377f;">ex</span>)
 &nbsp;&nbsp;&nbsp;&nbsp;{
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Processing&nbsp;failed,&nbsp;move&nbsp;the&nbsp;message&nbsp;to&nbsp;the&nbsp;dead-letter&nbsp;queue</span>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">arg</span>.<span style="color:#74531f;">DeadLetterMessageAsync</span>(<span style="color:#1f377f;">arg</span>.Message,&nbsp;<span style="color:#1f377f;">ex</span>.Message,&nbsp;<span style="color:#1f377f;">ex</span>.StackTrace);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">receiver</span>.<span style="color:#74531f;">DeadLetterMessageAsync</span>(<span style="color:#1f377f;">arg</span>.Message,&nbsp;<span style="color:#1f377f;">ex</span>.Message,&nbsp;<span style="color:#1f377f;">ex</span>.StackTrace);
 &nbsp;&nbsp;&nbsp;&nbsp;}
 }
 </pre>
@@ -283,7 +283,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;{
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;All&nbsp;retry&nbsp;attempts&nbsp;have&nbsp;failed</span>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">//&nbsp;Move&nbsp;the&nbsp;message&nbsp;to&nbsp;the&nbsp;DLQ</span>
-&nbsp;&nbsp;&nbsp;&nbsp;});
+&nbsp;&nbsp;&nbsp;&nbsp;});</pre>
                         </div>
                         <div>
                             Your exercise now is to include the Fallback DQL policy into your existing retry policy. The final behaviour should be:
