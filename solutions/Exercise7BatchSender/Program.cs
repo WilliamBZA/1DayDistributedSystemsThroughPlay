@@ -7,7 +7,7 @@ namespace Exercise7BatchSender
     {
         static async Task Main(string[] args)
         {
-            var client = new ServiceBusClient("connectionstring");
+            var client = new ServiceBusClient("");
             var sender = client.CreateSender("thedriveinvirtualdevice");
 
             var stopwatch = Stopwatch.StartNew();
