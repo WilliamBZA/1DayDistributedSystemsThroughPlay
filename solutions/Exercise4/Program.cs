@@ -97,7 +97,7 @@ namespace Exercise4
 
         private static void InitializeScreen()
         {
-            Ssd1306 oledscreen = new Ssd1306(I2cDevice.Create(new I2cConnectionSettings(1, Ssd1306.DefaultI2cAddress)), Ssd13xx.DisplayResolution.OLED128x64, DisplayOrientation.Landscape180);
+            Ssd1306 oledscreen = new Ssd1306(I2cDevice.Create(new I2cConnectionSettings(1, Ssd1306.DefaultI2cAddress)), Ssd13xx.DisplayResolution.OLED128x64, DisplayOrientation.Landscape);
             screen = new Screen(oledscreen);
         }
 
@@ -111,9 +111,10 @@ namespace Exercise4
             var buttonOnePushed = false;
             var buttonTwoPushed = false;
 
-            var button = gpioController.OpenPin(22, PinMode.InputPullDown);
+            var button = gpioController.OpenPin(23, PinMode.InputPullDown);
             button.DebounceTimeout = TimeSpan.FromMilliseconds(100);
-            button.ValueChanged += (s, e) => {
+            button.ValueChanged += (s, e) =>
+            {
                 buttonOnePushed = e.ChangeType == PinEventTypes.Rising;
 
                 if (buttonOnePushed && buttonTwoPushed)
@@ -122,7 +123,7 @@ namespace Exercise4
                 }
             };
 
-            var secondButton = gpioController.OpenPin(25, PinMode.InputPullDown);
+            var secondButton = gpioController.OpenPin(19, PinMode.InputPullDown);
             secondButton.DebounceTimeout = TimeSpan.FromMilliseconds(100);
             secondButton.ValueChanged += (s, e) =>
             {

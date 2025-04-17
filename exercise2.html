@@ -126,7 +126,7 @@
                             Instead of toggling every second, let's learn how to read a value from a GPIO pin.
                         </div>
                         <div>
-                            The button on your device is connected to GPIO pin 22.
+                            The button on your device is connected to GPIO pin 23.
                         </div>
                         <div>
                             Reading from a GPIO pin is similar to writing to a pin:
@@ -139,7 +139,7 @@
                         </div>
                         <div>
                             <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">gpioController</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">GpioController</span>();
-<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">button</span>&nbsp;=&nbsp;<span style="color:#1f377f;">gpioController</span>.<span style="color:#74531f;">OpenPin</span>(22,&nbsp;<span style="color:#066555;">PinMode</span>.InputPullDown);&nbsp;<span style="color:#066555;">//&nbsp;Use&nbsp;the&nbsp;GpioController&nbsp;to&nbsp;open&nbsp;the&nbsp;pin</span>
+<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">button</span>&nbsp;=&nbsp;<span style="color:#1f377f;">gpioController</span>.<span style="color:#74531f;">OpenPin</span>(23,&nbsp;<span style="color:#066555;">PinMode</span>.InputPullDown);&nbsp;<span style="color:#066555;">//&nbsp;Use&nbsp;the&nbsp;GpioController&nbsp;to&nbsp;open&nbsp;the&nbsp;pin</span>
 
 <span style="color:#1f377f;">button</span>.ValueChanged&nbsp;+=&nbsp;(<span style="color:#1f377f;">s</span>,&nbsp;<span style="color:#1f377f;">e</span>)&nbsp;=&gt;&nbsp;{
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span>{<span style="color:#066555;">DateTime</span>.UtcNow}<span style="color:#a31515;">&nbsp;-&nbsp;Button&nbsp;Pushed</span><span style="color:#a31515;">&quot;</span>);
@@ -177,7 +177,7 @@
 
                         <h3 class="breadcrumb">2. Toggle the LEDs only when both buttons are pressed</h3>
                         <div>
-                            There are two buttons on your device, the one on pin <code>21</code> and also a second button on pin <code>25</code>.
+                            There are two buttons on your device, the one on pin <code>23</code> and also a second button on pin <code>19</code>.
                             Change your code so that the LEDs toggle only if BOTH buttons are pushed.
                         </div>
                         <div class="note">
