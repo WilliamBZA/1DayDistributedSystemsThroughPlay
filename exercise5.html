@@ -110,8 +110,8 @@
 
                         <div>
                             <ol>
-                                <li>In the Azure Portal, navigate to the Service Bus Resource and click on the <code>+ Queue</code> link at the top of the page.</li>
                                 <li>Come up with a name for your console application's queue (maybe a variation of your device queue that you created in exercise 4? I called mine <code>ThedriveinVirtualDevice</code>)</li>
+                                <li>Use Service Bus Explorer to create a new queue for your second console application.</li>
                                 <li>Create a new Console Application (e.g., <code>MessageReceiver2</code>).</li>
                                 <li>Install the Azure.Messaging.ServiceBus NuGet package</li>
                                 <li>Update Program.cs to receive messages from the queue you just created. Copy the message receiver logic from your first Console Application, but update it to connect to the second queue instead.</li>
@@ -314,9 +314,9 @@
                         </div>
                         <div>
                             <ol>
-                                <li>Open the Azure Portal and find the Service Bus Resource we've been using</li>
-                                <li>Navigate to the Topics section and click + Topic at the top of the page</li>
-                                <li>Choose a name for your topic (e.g., <code>TeamNameLedToggleTopic</code>) and click Create.</li>
+                                <li>Open Service Bus Explorer</li>
+                                <li>Right-click on Topics section in the treeview, and click <code>Create Topic</code></li>
+                                <li>Choose a name for your topic (e.g., <code>TeamNameLedToggleTopic</code>), enter it into the <code>Relative URI</code> field and click <code>Create</code>.</li>
                             </ol>
                         </div>
                         <div>
@@ -327,7 +327,7 @@
                         </div>
 
                         <div class="task-callout">
-                            <strong><input type="checkbox" /> Your Task:</strong> Create a Topic in Azure Service Bus using the Azure Portal.
+                            <strong><input type="checkbox" /> Your Task:</strong> Create a Topic in Azure Service Bus using Service Bus Explorer.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. Bind both queues to the Topic</h3>
@@ -340,29 +340,30 @@
                         </div>
                         <div>
                             <ol>
-                                <li>Navigate to the Azure Portal page for the topic that you just created in step 3</li>
-                                <li>Click <code>+Subscription</code> button at the top of the screen</li>
+                                <li>Open Service Bus Explorer</li>
+                                <li>Right-click on the <code>Topic</code> you created in treeview and click <code>Create Subscription</code> in the context menu</li>
                                 <li>
                                     Create the first subscription:
                                     <ol>
                                         <li><strong>Subscription Name:</strong> <code>Thedriveintoggleledssubscription</code></li>
-                                        <li>Check the <code>Forward messages to queue/topic</code> checkbox</li>
-                                        <li><strong>Forward To:</strong> Select the queue you created for your NanoFramework device. (In my case, it's <code>thedrivein</code>)</li>
+                                        <li>Enter the queue you created for your NanoFramework device into the <code>Forward To</code> textbox</li>
                                         <li>Click <strong>Create</strong></li>
                                     </ol>
                                 </li>
+                                <li>Right-click on the <code>Topic</code> you created in treeview and click <code>Create Subscription</code> in the context menu</li>
                                 <li>
                                     Create the second subscription:
                                     <ol>
                                         <li><strong>Subscription Name:</strong> <code>Thedriveinconsoleapptoggleledssubscription</code></li>
-                                        <li>Check the <code>Forward messages to queue/topic</code> checkbox</li>
-                                        <li><strong>Forward To:</strong> Select the queue you created for your console application.</li>
+                                        <li><strong>Forward To:</strong> Enter the queue you created for your console application.</li>
                                         <li>Click <strong>Create</strong></li>
                                     </ol>
                                 </li>
                                 <li>Verify that both queues are now listed under Subscriptions for the topic.</li>
                             </ol>
                         </div>
+
+                        <img src="img/sbe-createsubscription.png" />
 
                         <div class="task-callout">
                             <strong><input type="checkbox" /> Your Task:</strong> Create two Subscriptions for your Topic, each forwarding to one of the two queues.
