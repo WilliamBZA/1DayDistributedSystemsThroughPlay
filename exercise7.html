@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -139,7 +139,8 @@
                             Wait, this took longer than calling <code>ReceiveMessageAsync</code>? What gives?
                         </div>
                         <div>
-                            Well, that's because we haven't changed any of the default settings for the <code>ServiceBusProcessor</code> yet. Let's start with concurrency...
+                            This is because <code>ServiceBusProcessor</code> introduces some overhead and defaults to sequential message handling.
+                            Don't worry... we're about to make it faster.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Increase Message Concurrency</h3>
@@ -227,7 +228,7 @@
                             This creates a batch of 500 messages and sends them as a single unit.
                         </div>
                         <div>
-                            Try change your console application that generates 100 messages to use batches. Is there a noticable difference in how long
+                            Try changing your console application that generates 100 messages to use batches. Is there a noticable difference in how long
                             it takes to send 100 messages?
                         </div>
 
@@ -239,7 +240,14 @@
                         </div>
                         <div>
                             JSON is a popular format, and one that's easy enough to use with the built-in c# types. There are other options though, and if we're integrating with
-                            other systems we might not always be in control of what Serialization format is being used. So how do we deserialize messages from multiple formats?
+                            other systems we might not always be in control of what Serialization format is being used.
+                        </div>
+                        <div>
+                            This becomes critical when your services integrate with others that use different technologies. For example,
+                            a legacy system sending XML or a high-performance service sending Protobuf.
+                        </div>
+                        <div>
+                            How do we make sure we can deserialize messages from multiple formats?
                         </div>
                         <div>
                             Well first of all, we need a way of know what format is being used. When we use Azure Service Bus, we can set the <code>ContentType</code>
@@ -303,8 +311,9 @@
 
                         <h3 class="breadcrumb">6. Dealing with different message types</h3>
                         <div>
-                            Sometimes, messages of different logical types (e.g., <code>OrderCreated</code>, <oode>OrderUpdated</oode>, <code>InventoryAdjusted</code>) may arrive.
-                            You'll want to identify the message type along with the serialization format.
+                            Often, different message types will be sent through the same topic or queue (e.g., <code>OrderCreated</code>,
+                            <oode>OrderUpdated</oode>, <code>InventoryAdjusted</code>). You'll need to deserialize the correct class
+                            based on the metadata in each message.
                         </div>
                         <div>
                             Let's use a similar technique for tracking the message type. We want to include a header that tells us what the object type is.
@@ -334,24 +343,47 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">break</span>;
 }</pre>
                         </div>
-                    </div>
-                    <div>
-                        Change your solution to be able to deserialize 2 message types:
-                        <ul>
-                            <li><code>ToggelLEDs</code></li>
-                            <li><code>TurnLEDsOn</code></li>
-                        </ul>
-                    </div>
-                    <div>
-                        Where <code>TurnLEDsOn</code> looks like this:
-                    </div>
-                    <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">public</span>&nbsp;<span style="color:blue;">class</span>&nbsp;<span style="color:#066555;">TurnLEDsOn</span>
-{
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ShouldRedBeOn&nbsp;{&nbsp;<span style="color:blue;">get</span>;&nbsp;<span style="color:blue;">set</span>;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ShouldBlueBeOn&nbsp;{&nbsp;<span style="color:blue;">get</span>;&nbsp;<span style="color:blue;">set</span>;&nbsp;}
-}</pre>
-                    <div>
-                        Then change your sender to send both of these message types and make sure that your deserialization works as expected.
+                        <div>
+                            Change your solution to be able to deserialize 2 message types:
+                            <ul>
+                                <li><code>ToggelLEDs</code></li>
+                                <li><code>TurnLEDsOn</code></li>
+                            </ul>
+                        </div>
+                        <div>
+                            Where <code>TurnLEDsOn</code> looks like this:
+                        </div>
+                        <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">public</span>&nbsp;<span style="color:blue;">class</span>&nbsp;<span style="color:#066555;">TurnLEDsOn</span>
+    {
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ShouldRedBeOn&nbsp;{&nbsp;<span style="color:blue;">get</span>;&nbsp;<span style="color:blue;">set</span>;&nbsp;}
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ShouldBlueBeOn&nbsp;{&nbsp;<span style="color:blue;">get</span>;&nbsp;<span style="color:blue;">set</span>;&nbsp;}
+    }</pre>
+                        <div>
+                            Then change your sender to send both of these message types and make sure that your deserialization works as expected.
+                        </div>
+
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <div>
+                                In this exercise, you explored how to improve the efficiency of your message processing pipeline. You:
+                                <ul>
+                                    <li>Switched from manual message polling to the <code>ServiceBusProcessor</code> for cleaner, event-driven message handling</li>
+                                    <li>Increased throughput using <strong>concurrency</strong> with <code>MaxConcurrentCalls</code></li>
+                                    <li>Boosted responsiveness using <strong>prefetching</strong> to reduce wait times between message processing</li>
+                                    <li>Improved send-side performance using <strong>message batching</strong></li>
+                                    <li>Handled multiple <strong>serialization formats</strong> like JSON, XML, and Protobuf</li>
+                                    <li>Processed <strong>multiple message types</strong> using metadata in <code>ApplicationProperties</code></li>
+                                </ul>
+                                <p>
+                                    These techniques help mature our distributed system pipeline. We have a solid foundation for building a pipeline that
+                                    allows you to introduce things like chaining behaviours together to be able to make behavioural changes in our applications.
+                                </p>
+                                <p>
+                                    In the next exercise, you'll dive into what happens when messages take too long - or never finish at all.
+                                </p>
+                            </div>
+                        </div>
+                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">

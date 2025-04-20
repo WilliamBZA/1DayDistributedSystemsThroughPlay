@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -194,13 +194,14 @@
 
                         <div>
                             Inconsistent state is problematic for a few reasons. In most business systems, the "state" of the system is typically represented by
-                            some form of data stored in a database of some kind. A message queue is another form of database, except that it onlhy stores commands
+                            some form of data stored in a database of some kind. A message queue is another form of database, except that it only stores commands
                             and events (or intents and facts). Since we've introduced another database, it becomes a problem if one database is no longer in sync
                             with another.
                         </div>
 
+                        <h5 class="mt-3">💥 The Danger of Inconsistent State</h5>
                         <div>
-                            For example, let's assume that we send a message to charge a customer's credit card. If the message handler successfully charges the
+                            As an example, let's assume that we send a message to charge a customer's credit card. If the message handler successfully charges the
                             customer's credit card, but on the next line of code it throws an exception. In this case, the message will remain in the queue to
                             be processed by another thread. Except that the customer's credit card has been charged! So if the next thread picks up the message
                             and processes it, it will double-charge the customer's credit card! 😡
@@ -216,12 +217,15 @@
                         </div>
 
                         <div>
-                            We would like our Send operations to be <strong>Atomic</strong>. We want to publish once, and know that everyone that is interested in the
-                            message that we published will receive a copy of it.
+                            Ideally, we want our Send operations to be <strong>atomic</strong> — we publish once, and everyone who's interested gets a copy of the message.
                         </div>
 
                         <div>
-                            We can achieve this in Azure ServiceBus by using Topis and Subscriptions.
+                            So how do we avoid this problem entirely? What if we could <strong>send the message once</strong> and let the broker
+                            take care of delivering it to all interested parties?
+                        </div>
+                        <div>
+                            That's exactly what <strong>Topics and Subscriptions</strong> are for.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step3">3. Use a Transaction to send to multiple queues atomically</h3>
@@ -334,7 +338,7 @@
                                     <ol>
                                         <li><strong>Subscription Name:</strong> <code>Thedriveinconsoleapptoggleledssubscription</code></li>
                                         <li>Check the <code>Forward messages to queue/topic</code> checkbox</li>
-                                        <li><strong>Forward To:</strong> Select the queue you created for your NanoFramework device.</li>
+                                        <li><strong>Forward To:</strong> Select the queue you created for your console application.</li>
                                         <li>Click <strong>Create</strong></li>
                                     </ol>
                                 </li>
@@ -398,6 +402,26 @@
                                 </li>
                             </ul>
                         </div>
+
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <div>
+                                In this exercise, you:
+                                <ul>
+                                    <li>Explored the difference between <strong>Commands</strong> and <strong>Events</strong></li>
+                                    <li>Discovered how multiple queues can lead to inconsistent state when sending separately</li>
+                                    <li>Used <code>TransactionScope</code> to ensure atomicity across multiple send operations</li>
+                                    <li>Created a <strong>Topic</strong> in Azure Service Bus and connected multiple <strong>Queues</strong> via <strong>Subscriptions</strong></li>
+                                    <li>Sent a single message to a topic and had it delivered to multiple subscribers</li>
+                                </ul>
+                                <p>
+                                    By introducing Topics and Subscriptions, we gained the ability to <strong>fan-out messages safely</strong>,
+                                    avoiding inconsistencies and decoupling producers from consumers.
+                                    This is the backbone of scalable, event-driven architecture.
+                                </p>
+                            </div>
+                        </div>
+                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">

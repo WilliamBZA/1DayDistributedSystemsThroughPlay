@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -146,6 +146,24 @@
                         <div>
                             If done correctly, your LEDs should toggle when you click the button on this page.
                         </div>
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <p>In this exercise, you:</p>
+                            <ul>
+                                <li>Created a new HTTP route using a custom <code>LedController</code></li>
+                                <li>Registered controller routes in the <code>WebServer</code> startup code</li>
+                                <li>Handled HTTP POST requests on your NanoFramework device</li>
+                                <li>Triggered hardware actions (LED toggling) from remote HTTP calls</li>
+                            </ul>
+                            <p>
+                                This is your first real step toward building distributed systems—where remote devices communicate
+                                and trigger each other across a network.
+                            </p>
+                            <p>
+                                We have exposed HTTP endpoints on our devices, <strong>turning them into network-connected controllers that can react to the outside world</strong>.
+                            </p>
+                        </div>
+                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
@@ -164,13 +182,13 @@
                             You can start with the code:
                             <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;">[<span style="color:#066555;">Route</span>(<span style="color:#a31515;">&quot;api/toggleremoteleds&quot;</span>)]
 [<span style="color:#066555;">Method</span>(<span style="color:#a31515;">&quot;POST&quot;</span>)]
-<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ToggleTemoteLeds</span>(<span style="color:#066555;">WebServerEventArgs</span>&nbsp;<span style="color:#1f377f;">e</span>)
+<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">ToggleRemoteLeds</span>(<span style="color:#066555;">WebServerEventArgs</span>&nbsp;<span style="color:#1f377f;">e</span>)
 {
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">WebServer</span>.<span style="color:#74531f;">OutputHttpCode</span>(<span style="color:#1f377f;">e</span>.Context.Response,&nbsp;<span style="color:#066555;">HttpStatusCode</span>.OK);
 }</pre>
                         </div>
                         <div>
-                            You will have to create an instance of an <code>HttpWebRequest</code> to make a remote HTTP call. There is a sample showing how to do That
+                            You will have to create an instance of an <code>HttpWebRequest</code> to make a remote HTTP call. There is a sample showing how to do that
                             <a href="https://github.com/nanoframework/Samples/blob/main/samples/HTTP/HttpWebRequest/Program.cs#L78">here</a>.
                         </div>
 

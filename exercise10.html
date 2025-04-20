@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -77,6 +77,10 @@
                             Scheduled messages allow you to publish a message now and have it become visible to receivers at a later time. This lets you handle delayed
                             processing without needing extra timers or background jobs. Whether you want to build a retry mechanism, time-based notification system,
                             or staggered command pattern, message scheduling is a powerful tool to have in your belt.
+                        </div>
+                        <div class="note">
+                            💡This concept isn't limited to retrying failed messages. Think of sending a reminder message 24 hours after signup,
+                            or retrying a failed operation in 2 minutes.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step1">1. Schedule a message for the future</h3>
@@ -134,6 +138,10 @@
                         <div>
                             By scheduling the message again in the <code>catch</code> block, we can take the message from the queue and process it later.
                         </div>
+                        <div class="note">
+                            ⚠️ We're simulating a retry by scheduling a new copy of the message. It's not the original message that is being retried again next time,
+                            but a copy.
+                        </div>
 
                         <h3 class="breadcrumb" id="vs-step4">4. Why Not Just Use Polly's WaitAndRetry?</h3>
                         <div>
@@ -179,6 +187,28 @@
                         <div>
                             When using scheduled messages instead of Polly's <code>WaitAndRetry</code> policy, you should see that the message that always fails is moved back to the
                             queue after it's immediate retries. While it's waiting for it's schedule to elapse, the other messages in the queue can be processed.
+                        </div>
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What we learned</h3>
+                            <div>
+                                <p>
+                                    In this exercise, you explored how scheduled messages in Azure Service Bus let you delay the processing of messages without blocking threads or holding locks.
+                                    This technique is especially useful when retrying failed messages in a distributed system or when planning future actions like notifications or staggered jobs.
+                                </p>
+                                <ul>
+                                    <li>You learned how to use <code>ScheduleMessageAsync</code> to delay a message's delivery.</li>
+                                    <li>You saw how scheduling affects message visibility and when they become available to your receiver.</li>
+                                    <li>You used scheduled messages to implement delayed retries for failed operations.</li>
+                                    <li>You compared scheduled retries to Polly's <code>WaitAndRetry</code>, and understood why scheduling can be more scalable in most scenarios.</li>
+                                    <li>You experimented with combining immediate retries (via Polly) and scheduled delivery for longer delays.</li>
+                                </ul>
+                                <p>
+                                    By the end of this section, you should have a strong understanding of how and when to use delayed delivery to improve reliability and throughput in your message processing pipeline.
+                                </p>
+                                <p>
+                                    You should also have some ideas of where delayed delivery can be useful for unlocking application behaviour...
+                                </p>
+                            </div>
                         </div>
                     </div>
 
