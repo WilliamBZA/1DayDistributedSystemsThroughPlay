@@ -119,6 +119,9 @@
                             Add the newly created <code>LedController</code> type to this array too. Once this is done, the WebServer will look for any routes
                             defined in the <code>LedController</code> class to listen to.
                         </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Create a new class called <code>LedController</code> inside the Controllers folder and add it to the <code>WebServer</code> type array in <code>Program.cs</code>.
+                        </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Add a method bound to an HTTP Route</h3>
                         <div>
@@ -135,6 +138,9 @@
                         <div>
                             This method will now be invoked when our microcontroller receives an HTTP POST to <code>/api/toggleleds</code>
                         </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong>Add a ToggleLeds method to <code>LedController</code> that responds to POST /api/toggleleds and returns a <code>200 OK</code>.
+                        </div>                        
 
                         <h3 class="breadcrumb" id="vs-step3">3. Toggle the LEDs when an HTTP POST is made</h3>
                         <div>
@@ -146,6 +152,13 @@
                         <div>
                             If done correctly, your LEDs should toggle when you click the button on this page.
                         </div>
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Use the code from Exercise 2 to toggle the LEDs from the <code>ToggleLeds</code> method.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Make sure your LEDs are toggled when clicking the button at the top of this page</li>
+                            </ul>
+                        </div>
+
                         <div class="learned-box">
                             <h3 class="breadcrumb">What We Learnt</h3>
                             <p>In this exercise, you:</p>

@@ -118,6 +118,10 @@
                             In what cases do you think <code>ReceiveAndDelete</code> would be a better choice than <code>PeekLock</code>? Why?
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Change your receiver to use <code>ReceiveMode.ReceiveAndDelete</code>. Then send a message that throws an exception when processed. What happens?
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step2">2. Message Visibility Timeouts</h3>
                         <div>
                             When you receive a message from Azure Service Bus in <code>PeekLock</code> mode, it doesn't just disappear: it gets locked for
@@ -193,6 +197,14 @@
                             Sometimes though you simply have to do something that takes longer than a minute to complete. So how do we extend this timout?
                         </div>
 
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Set the lock duration in Service Bus Explorer to 1 minute. Then configure <code>MaxAutoLockRenewalDuration</code> to 10 seconds in your receiver.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Change the time it takes to process a message to be more than 1 minute.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Run your application and see how many times your message is processed.</li>
+                            </ul>
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step3">3. Renew the Lock While You Work</h3>
                         <div>
                             Now that you've seen what happens when the lock expires, let's learn how to keep that lock alive while you're still processing
@@ -247,6 +259,11 @@
                         <div>
                             <strong>Tune It Based on Real-World Behavior</strong>
                         </div>
+                        
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Increase your <code>MaxAutoLockRenewalDuration</code> and verify that your long-running handler no longer triggers duplicate processing.
+                        </div>
+                        
                         <div class="learned-box">
                             <h3 class="breadcrumb">What did we learn?</h3>
                             <div>

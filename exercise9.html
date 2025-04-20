@@ -96,6 +96,9 @@
                             Rate limiting isn't about slowing you down: it's about preventing you from hitting a wall. It gives your downstream systems a
                             breather, and helps your system behave more predictably under pressure.
                         </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Identify types of services that could require rate limiting.
+                        </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Polly's rate limiting support</h3>
                         <div>
@@ -125,6 +128,10 @@
                             so your handler code doesn't need to worry about counting requests.
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Create a Polly rate limiter policy that limits processing to 20 messages per 10 seconds.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step3">3. Integrate the Policy into Your Message Handler</h3>
                         <div>
                             Wrap your message handler invocation inside the rate limit policy:
@@ -141,6 +148,12 @@
                             This keeps your handler from firing off too many calls at once and overwhelming anything downstream. If your handler is invoked
                             more frequently than allowed, Polly will throw a <code>RateLimitRejectedException</code>. That exception can be caught and handled by a 
                             <code>WaitAndRetry</code> policy to implement a delay in processing.
+                        </div>
+
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Wrap your message processing logic inside a <code>RateLimitAsync</code> Polly policy.</li>
+                            </ul>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step4">4. Configure a Polly policy for RateLimitRejectedExceptions</h3>
@@ -173,6 +186,10 @@
                             This gives your system a graceful way to slow down when it's pushing too hard; without letting things fall over.
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Combine the rate limiter with a retry policy that waits 20 seconds before retrying up to 3 times.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step5">5. Testing Your Rate Limiter</h3>
                         <div>
                             Once you've implemented the rate limiting using Polly, it's time to test your rate limiter.
@@ -184,6 +201,10 @@
                         <div>
                             Give it a try! Fire off 100 messages and see how your system responds with and without rate limiting. Keep an eye on
                             the console logs: they'll show you exactly how Polly keeps things in check.
+                        </div>
+
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Send 100 messages quickly to your queue and observe how the rate limiter slows down processing to protect downstream services.
                         </div>
 
                         <div class="learned-box">

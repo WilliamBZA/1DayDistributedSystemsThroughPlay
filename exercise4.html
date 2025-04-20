@@ -113,6 +113,10 @@
                             With the queue now created, we have everything we need to be able to start using messages to communicate with our device.
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Use Service Bus Explorer to create a new Service Bus queue with a unique name.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step2">2. Create a console application to send a message</h3>
                         <div>
                             We're going to start with a full .NET application instead of a NanoFramework application. This is mostly because we're just using NanoFramework
@@ -185,6 +189,10 @@
                             Congratulations! If you've gotten this far, then you've successfully sent a message using Azure Service Bus 👏
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Write and run a console app that sends a <code>JSON</code> message to your queue using the <code>Azure.Messaging.ServiceBus</code> SDK.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step3">3. Create a listener in NanoFramework</h3>
                         <div>
                             Now we'll pivot to NanoFramework to receive the message and process it. When communicating with Azure Service Bus with NanoFramework, we can't
@@ -214,6 +222,9 @@
                         <div>
                             Once your application has read the message from the queue, you should refresh the Service Bus Manager queue peek page and validate that there
                             are no messages in the queue anymore.
+                        </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Add <code>AmqpNetLite</code> to your NanoFramework project and write code to receive a message from your queue.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step4">4. Toggle the LEDs when a message comes in</h3>
@@ -267,6 +278,13 @@
                             Now with this, your receiver link will receive more than one message so your Console Application should be able to send multiple toggle messages
                             to the device to have it toggle multiple times.
                         </div>
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Toggle the LEDs and acknowledge the message.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Switch to using <code>.Start()</code> to keep processing more messages.</li>
+                            </ul>
+                        </div>
+
                         <div class="learned-box">
                             <h3 class="breadcrumb">What We Learnt</h3>
                             <p>In this exercise, you:</p>

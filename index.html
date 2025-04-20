@@ -95,6 +95,10 @@
                         </div>
                         <img src="img/deviceselection.png" />
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Open the Device Explorer window and select the connected ESP32 device.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step3">2. F5 to run the application</h3>
                         <div>
                             Your application is now ready to deploy. Hit <kbd>F5</kbd> to deploy and debug your application. The Visual Studio extension will now compile
@@ -102,11 +106,17 @@
                             Breakpoints, Quick Watch, Watches, etc.)
                         </div>
                         <img src="img/debugging.png" />
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Build and deploy the application to your device.
+                        </div>
 
                         <h3 class="breadcrumb" id="vs-step3">3. Success!</h3>
                         <div>
                             If you managed to deploy everything successfully, you should see a message in your debugger:
                             <code>You have successfully deployed your first NanoFramework application at 01/01/1970 00:08:18</code>
+                        </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Confirm that you see the success message in the output window.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step4">4. Connecting to WiFi</h3>
@@ -171,6 +181,14 @@
                         <div>
                             🎉👏
                         </div>
+
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Modify the <code>ConnectToWiFi</code> method to connect to the <code>introtomessaging</code> network using the provided password.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Display the device's IP address on the OLED screen.</li>
+                            </ul>
+                        </div>
+
                         <div class="learned-box">
                             <h3 class="breadcrumb">What We Learnt</h3>
                             <div>
@@ -204,7 +222,6 @@
                                 <li>Deploy the project</li>
                             </ol>
                         </div>
-                        <hr/>
 
                         <h3 class="breadcrumb" id="vscode-step1">1. Build the application</h3>
                         <div>
@@ -222,8 +239,10 @@
 
                             <div>Once complete, your solution will be built. Now you need to deploy it.</div>
                         </div>
-                        <hr/>
-
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Use the NanoFramework extension to build the <code>Deployment.sln</code> solution from the Command Palette.
+                        </div>
+                        
                         <h3 class="breadcrumb" id="vscode-step2">2. Deploy the application</h3>
 
                         <div>
@@ -241,6 +260,9 @@
                                 Your solution will now be deployed to the device. The output should look something like this:
                             </div>
                             <img src="img/deploylog.png" />
+                        </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Deploy the solution to your device and confirm a successful deployment in the terminal output.
                         </div>
 
                         <h3 class="breadcrumb" id="vscode-step3">3. Success!</h3>
@@ -308,6 +330,10 @@
                         <div>
                             🎉👏
                         </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Implement the <code>ConnectToWiFi</code> method using <code>WifiNetworkHelper.ConnectDhcp</code> and verify the screen shows the correct time and IP address.
+                        </div>
+                        
                         <div class="learned-box">
                             <h3 class="breadcrumb">What We Learnt</h3>
                             <div>
