@@ -84,30 +84,47 @@
                             Azure Service Bus is going to be our broker of choice in this workshop. We'll start off with the basics: creating a queue in a Service Bus instance.
                         </div>
                         <div>
-                            You've been given access to a Service Bus Resource in Azure Portal. Log in to Azure Portal, and find your Service Bus Resource. Everyone in the
-                            workshop is using the same service bus instance, so your queue will have to have a unique name.
+                            You've been given access to a Service Bus Resource in Azure and we'll be using
+                            <a href="https://github.com/paolosalvatori/ServiceBusExplorer/releases/">Service Bus Explorer</a> to manage this resource.
+                            Download Service Bus Explorer and start the application.
                         </div>
-
                         <div>
-                            In the Azure Portal, navigate to the Service Bus Resource and click on the <code>+ Queue</code> link at the top of the page.
+                            Once Service Bus Explorer is open, click <code>File</code> -> <code>Connect using SAS</code>
                         </div>
-
-                        <img src="img/createqueuelink.png" />
+                        <div>
+                            In the <code>Service Bus Namespace</code> dropdown, select <code>Enter connection string...</code>
+                            <img src="img/sbe-selectconnectionstring.png" />
+                        </div>
+                        <div>
+                            Now paste the connection string into the textbox on the right hand side and click <code>Save</code> and then <code>Ok</code> to connect to the broker.
+                        </div>
+                        <div class="note">
+                            🔐 Two connection strings will be shared with you. One for connecting normally, and one for connecting via AMQP. Use the normal connection string here.
+                        </div>
+                        <div>
+                            Now right-click on the <code>Queues</code> tree icon and click on <code>Create Queue</code>.
+                        </div>
+                        <img src="img/sbe-createqueuemenu.png" />
 
                         <div>
                             Come up with a name for your device's queue - something fun but keep it clean 😉. This is the name of the queue that we will use to send messages to our device.
                             In this example, I called my queue <code>TheDriveIn</code>. All of the other settings can be left as default for now - we'll cover what they
-                            are later. Once you've entered your queue's name, click <code>Create</code> to create the queue.
+                            are later.
                         </div>
-
-                        <img src="img/createqueue.png" />
+                        <div>
+                            Type your queue name into the <code>Relative URI</code> field and click <code>Create</code>.
+                        </div>
+                        <img src="img/sbe-createqueue.png" />
+                        <div class="note">
+                            ⚠️ Everyone in the workshop is using the same service bus instance, so make sure your queue has a unique name.
+                        </div>
 
                         <div>
                             It shouldn't take more than a couple minutes for Azure to create your queue for you. Once it's done, you'll see your queue in the list of queues
-                            at the bottom of the page.
+                            in the treeview on the left of the application.
                         </div>
 
-                        <img src="img/queuecreated.png" />
+                        <img src="img/sbe-queuecreated.png" />
 
                         <div>
                             With the queue now created, we have everything we need to be able to start using messages to communicate with our device.
@@ -153,44 +170,46 @@
                         </div>
                         <div>
                             When creating an instance of the <code>ServiceBusClient</code> you will require some way of connecting to the instance of ServiceBus. For our
-                            purposes, we will use the connection string from the Azure Portal for this.
+                            purposes, we will use the connection string that was shared with you privately for this.
                         </div>
-                        <div>
-                            To get the connection string, open Azure Portal and find the <code>Settings -> Shared access policies</code>
-                        </div>
-                        <img src="img/accesspolicy.png" />
-                        <div>
-                            This will open a tab on the right of the screen. Over here you can either copy the Connection String (for the Console Application) or the AMQP
-                            connection string (for the NanoFramework application.)
-                        </div>
-                        <img src="img/connectionstring.png" />
                         <div>
                             Run your code. Your code should have now sent a message to the Azure Service Bus Queue. Let's validate that the message has been successfully
                             sent:
                         </div>
 
                         <div>
-                            Navigate to the Service Bus instance in Azure Portal, and click on the queue that you created. On the next screen, click on the
-                            <code>Service Bus Explorer link</code>
+                            Open Service Bus Explorer again, and refresh the treeview in the left. You can do this by right-clicking on the <code>Queues</code>
+                            treeview item, and clicking <code>Refresh Queues F5</code>. You can also select the <code>Queues</code> item, and hit <kbd>F5</kbd>.
                         </div>
-                        <img src="img/findservicebusexplorer.png" />
+                        <img src="img/sbe-refreshqueues.png" />
 
                         <div>
-                            If your message was correctly sent, you'll be able to Peek the message from the queue by clicking <code>Peek from start</code>
+                            If your message was correctly sent, you'll be able to Peek the message from the queue by clicking on your queue in the treeview,
+                            and then clicking on the <code>Messages</code> button.
                         </div>
-                        <img src="img/peek.png" />
+                        <img src="img/sbe-messagesbutton.png" />
+
+                        <div>
+                            This will open a dialog which asks you for the mode you want to use to view the messages. Leave all the values as default and
+                            click <code>Ok</code>
+                        </div>
+                        <img src="img/sbe-peekmessagesdialog.png" />
+
+                        <div>
+                            Service Bus Explorer will now show you a list of the first 10 messages that are in your queue.
+                        </div>
+                        <img src="img/sbe-messagesview.png" />
                         
                         <div>
-                            Make sure you Peeked the message in <code>Peek mode</code> instead of <code>Receive mode</code>. Receive mode will remove the message from the
-                            queue, whilst Peek mode will leave the message on the queue so that our code can receive that message later.
-                        </div>
-
-                        <div>
-                            Congratulations! If you've gotten this far, then you've successfully sent a message using Azure Service Bus 👏
+                            Congratulations! If you've gotten this far, and you can see a message in the table,
+                            then you've successfully sent a message using Azure Service Bus 👏
                         </div>
 
                         <div class="task-callout">
-                            <strong><input type="checkbox" /> Your Task:</strong> Write and run a console app that sends a <code>JSON</code> message to your queue using the <code>Azure.Messaging.ServiceBus</code> SDK.
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Write and run a console app that sends a <code>JSON</code> message to your queue using the <code>Azure.Messaging.ServiceBus</code> SDK.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Use Service Bus Explorer to validate that your message has been successfully sent.</li>
+                            </ul>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step3">3. Create a listener in NanoFramework</h3>
