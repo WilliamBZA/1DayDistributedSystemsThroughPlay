@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -81,7 +81,7 @@
 
                         <h3 class="breadcrumb" id="vs-step1">1. Create an Azure Service Bus Queue</h3>
                         <div>
-                            Azure Service Bus is going to be our broker of choice in this workshop. We'll start of with the basics: creating a queue in a Service Bus instance.
+                            Azure Service Bus is going to be our broker of choice in this workshop. We'll start off with the basics: creating a queue in a Service Bus instance.
                         </div>
                         <div>
                             You've been given access to a Service Bus Resource in Azure Portal. Log in to Azure Portal, and find your Service Bus Resource. Everyone in the
@@ -133,7 +133,7 @@
                                 <li>Creating an instance of the <code>ServiceBusClient</code> class</li>
                                 <li>Using the <code>ServiceBusClient</code> to create a new instance of a <code>ServiceBusSender</code></li>
                                 <li>Create a new <code>ServiceBusMessage</code></li>
-                                <li>Set the body of the message to be the content of a <code>ToggleLEDs</code> object (for this exercide we'll do a string representation of JSON,
+                                <li>Set the body of the message to be the content of a <code>ToggleLEDs</code> object (for this exercise we'll do a string representation of JSON,
                                     but more on this in later exercises)</li>
                                 <li>Send the message</li>
                             </ol>
@@ -177,7 +177,7 @@
                         <img src="img/peek.png" />
                         
                         <div>
-                            Make sure you Peeked the message in <code>Peek mode</code> instead of <code>Receive mode</code>. Receive mode wll remove the message from the
+                            Make sure you Peeked the message in <code>Peek mode</code> instead of <code>Receive mode</code>. Receive mode will remove the message from the
                             queue, whilst Peek mode will leave the message on the queue so that our code can receive that message later.
                         </div>
 
@@ -202,8 +202,8 @@
 
                             <ol>
                                 <li>Connecting to the Service Bus using the AMQP connection string as a parameter in the constructor for a <code>Connection</code> class</li>
-                                <li>Creating a new instance of a <code>Session</code> class, by passing the connection into it's constructor</li>
-                                <li>Creating a <code>ReceiverLink</code> with the session, link name (anything descriptive), and the queue name</li>
+                                <li>Creating a new instance of a <code>Session</code> class, by passing the connection into its constructor</li>
+                                <li>Creating a <code>ReceiverLink</code> with the session, link name (anything descriptive), and the queue name <i>(i.e. the same name you gave it in Service Bus Explorer)</i></li>
                                 <li>Receive a <code>Message</code> by calling the <code>.Receive()</code> method on the <code>ReceiverLink</code> instance</li>
                             </ol>
                         </div>
@@ -267,6 +267,22 @@
                             Now with this, your receiver link will receive more than one message so your Console Application should be able to send multiple toggle messages
                             to the device to have it toggle multiple times.
                         </div>
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <p>In this exercise, you:</p>
+                            <ul>
+                                <li>Created a message queue using Azure Service Bus</li>
+                                <li>Sent a message from a .NET Console App using the <code>Azure.Messaging.ServiceBus</code> SDK</li>
+                                <li>Used <code>AmqpNetLite</code> on a NanoFramework device to connect to and receive messages from Service Bus</li>
+                                <li>Triggered hardware behavior (LED toggle) in response to a received message</li>
+                                <li>Switched from one-off message handling to continuous message consumption using <code>.Start</code></li>
+                            </ul>
+                            <p>
+                                This is the beginning of <strong>messaging-based</strong> 📨 communication where decoupling producers and consumers gives
+                                us flexibility, scalability, and resilience. You're officially building distributed systems 📡
+                            </p>
+                        </div>
+                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">

@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -72,7 +72,7 @@
                             distributed systems techniques, we first need to learn how to interact with some of the escape room devices.
                         </div>
                         <div>
-                            TO do this, we're going to start with turning a simple LED on and off. 
+                            To do this, we're going to start with turning a simple LED on and off. 
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step1">1. Turn the Red LED on when the device starts</h3>
@@ -134,7 +134,7 @@
                             <ol>
                                 <li>Create an instance of a <code>GpioController</code></li>
                                 <li>Use the <code>GpioController</code> to open the pin</li>
-                                <li>Subscribe to tthe pin's <code>ValueChanged</code> event</li>
+                                <li>Subscribe to the pin's <code>ValueChanged</code> event</li>
                             </ol>
                         </div>
                         <div>
@@ -148,6 +148,19 @@
                         <div>
                             Use the <code>ValueChanged</code> callback to toggle the state of the LEDs when the button is pushed.
                         </div>
+
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <p>In this exercise, you:</p>
+                            <ul>
+                                <li>Controlled LEDs using GPIO output pins</li>
+                                <li>Used a <code>GpioController</code> to write to and read from specific pins</li>
+                                <li>Wrote code to react to a button being pressed</li>
+                                <li>Used event-driven programming on hardware with <code>ValueChanged</code></li>
+                            </ul>
+                            <p>With this foundation, you're ready to get your device to interact with the outside world.</p>
+                        </div>
+                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
@@ -165,7 +178,7 @@
                         </div>
                         <div>
                             The technique to prevent this from happening is known as <code>Debouncing</code>. This is where you react to the button being pushed, and then
-                            you pause all other input reading from that button for a few millliseconds (e.g. 100ms). This means that as the button makes it's first contact and triggers
+                            you pause all other input reading from that button for a few milliseconds (e.g. 100ms). This means that as the button makes it's first contact and triggers
                             a LOW to HIGH transition, your microcontroller ignores any other state transitions for that button for however long you defined.
                         </div>
                         <div>

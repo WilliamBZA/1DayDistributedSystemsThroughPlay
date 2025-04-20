@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -70,7 +70,8 @@
                 <div class="tab-content" id="exerciseContent">
                     <div class="tab-pane show active" id="gpio-tab-content" role="tabpanel" aria-labelledby="gpio-tab" tabindex="0">
                         <div>
-                            Sometimes the bottleneck isn't your code, it's the service you're calling. Maybe it's an external API, maybe it's your own database.
+                            Sometimes the bottleneck isn't your code, it's the service you're calling. That's where <i>rate limiting</i> comes in.
+                            Maybe it's an external API, maybe it's your own database.
                             Whatever the case, if that service gets overwhelmed, bad things happen fast: timeouts, throttling, maybe even crashes.
                         </div>
                         <div>
@@ -83,8 +84,8 @@
 
                         <h3 class="breadcrumb" id="vs-step1">1. Understand Rate Limiting</h3>
                         <div>
-                            Rate limiting ensures that your application doesn't try to process more messages than it can handle. When the limit is reached,
-                            your handler temporarily rejects or delays further requests. This helps prevent overwhelming downstream systems like databases or APIs.
+                            Rate limiting helps your app avoid overloading downstream services by limiting how many messages it handles in a given time.
+                            Once the limit's hit, your handler can back off temporarily, giving those services a breather.
                         </div>
                         <div>
                             Let's say your message handler needs to call a payment gateway to charge a credit card. That gateway might have a rate limit of 10 calls per second.
@@ -112,7 +113,7 @@
                             This line means: "Allow up to 20 calls every 10 seconds." Once the limit is hit, any more requests during that window will be rejected until the window resets.
                         </div>
                         <div>
-                            This is useful when working with systems like:
+                            You'll find this especially handy when you're working with systems like:
                             <ul>
                                 <li>APIs that enforce quotas or rate limits</li>
                                 <li>Databases with limited connection pools</li>
@@ -137,7 +138,7 @@
 </pre>
                         </div>
                         <div>
-                            This ensures that no more than the configured number of messages are processed within the specified window. If your handler is invoked
+                            This keeps your handler from firing off too many calls at once and overwhelming anything downstream. If your handler is invoked
                             more frequently than allowed, Polly will throw a <code>RateLimitRejectedException</code>. That exception can be caught and handled by a 
                             <code>WaitAndRetry</code> policy to implement a delay in processing.
                         </div>
@@ -169,7 +170,7 @@
                             still being rate-limited, the exception will bubble up.
                         </div>
                         <div>
-                            This pattern gives your system a second chance at success without overwhelming downstream services.
+                            This gives your system a graceful way to slow down when it's pushing too hard; without letting things fall over.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. Testing Your Rate Limiter</h3>
@@ -180,6 +181,27 @@
                             To test, simulate sending 100 messages rapidly to your queue. Observe how the rate limit affects processing speed. You should see some messages delayed,
                             preventing your handler from becoming overwhelmed.
                         </div>
+                        <div>
+                            Give it a try! Fire off 100 messages and see how your system responds with and without rate limiting. Keep an eye on
+                            the console logs: they'll show you exactly how Polly keeps things in check.
+                        </div>
+
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What we learned</h3>
+                            <div>
+                                <p>
+                                    In this exercise, we looked at how to be a good citizen in a distributed system by not flooding downstream services with too much traffic.
+                                    Sometimes, taking your foot off the gas is the best way to keep things running smoothly.
+                                </p>
+                                <ul>
+                                    <li>Sometimes you have to slow down to speed up. Rate limiting helps prevent downstream systems from getting overwhelmed.</li>
+                                    <li>Polly makes it easy to apply a rate limit policy that enforces how often your message handler can run.</li>
+                                    <li>Combining rate limiting with retry policies gives your system a second chance when you're temporarily pushing too hard.</li>
+                                    <li>Too much concurrency + a low rate limit = a lot of waiting. It's all about finding the right balance.</li>
+                                </ul>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">

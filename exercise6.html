@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -132,7 +132,7 @@
 </pre>
                         </div>
                         <div>
-                            While the manual approach works, Polly provides a much cleaner and more configurable way to handle retries.\
+                            While the manual approach works, Polly provides a much cleaner and more configurable way to handle retries.
                             Let's implement a simple retry policy with Polly. First, install the Polly NuGet package.
                         </div>
                         <div>
@@ -237,7 +237,7 @@
 </pre>
                         </div>
 
-                        <h3 class="breadcrumb" id="vs-step3">3. Poison messasges</h3>
+                        <h3 class="breadcrumb" id="vs-step3">3. Poison messages</h3>
                         <div>
                             Some messages simply cannot be processed no matter how many times you try or how long you wait. These are often called "poison messages."
                             They might contain invalid data, reference non-existent resources, require permissions your service doesn't have, or your code might have a bug that
@@ -294,17 +294,22 @@
                             </ol>
                         </div>
 
-                        <h4>What did we learn?</h4>
-                        <div>
-                            In this exercise, you explored how transient failures can impact distributed systems - and how retry strategies can help
-                            make your system more resilient. You saw:
-
-                            <ul>
-                                <li>How immediate retries can help overcome short network blips or timing issues.</li>
-                                <li>How delayed retries with exponential backoff reduce pressure on failing services and increase chances of recovery.</li>
-                                <li>How to deal with messages that will never be processed, no matter how many times we try</li>
-                            </ul>
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <div>
+                                In this exercise, you explored how transient failures can impact distributed systems and how retry strategies can help
+                                make your system more resilient. You saw:
+                                <ul>
+                                    <li>How immediate retries can help overcome short network blips or timing issues.</li>
+                                    <li>How delayed retries with exponential backoff reduce pressure on failing services and increase chances of recovery.</li>
+                                    <li>How to deal with messages that will never be processed, no matter how many times we try.</li>
+                                </ul>
+                                <p>
+                                    By layering different retry strategies and fallback behavior, you've made your message-handling logic more robust and production-ready.
+                                </p>
+                            </div>
                         </div>
+                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">

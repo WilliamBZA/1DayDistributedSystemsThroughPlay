@@ -79,3 +79,28 @@ pre {
 .footer-nav a {
     margin-right: 2em;
 }
+
+.learned-box {
+    background-color: var(--bs-info-bg-subtle);
+    border-left: 5px solid #0d6efd; /* Bootstrap's primary blue */
+    padding: 1rem 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+}
+
+.learned-box h3::before {
+    content: "🧠 ";
+}
+
+.learned-box h3 {
+    margin-top: 0;
+}
+
+.learned-box ul {
+    padding-left: 1.2rem;
+}
+
+.learned-box li::before {
+    content: "✅ ";
+}

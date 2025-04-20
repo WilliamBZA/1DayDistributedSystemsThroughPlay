@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -84,7 +84,7 @@
                         <h3 class="breadcrumb" id="vs-step1">1. Make sure the correct device is selected</h3>
 
                         <div>
-                            The NanoFramework extension for Visual Studio adds a <code>Device Explorer</code> window with lists any compatible ESP32 devices that are connected
+                            The NanoFramework extension for Visual Studio adds a <code>Device Explorer</code> window which shows all compatible ESP32 devices that are connected
                             to the computer. To open the window, go to <code>View -> Other Windows -> Device Explorer</code>.
                             <img src="img/devicieexplorerwindow.png" />
                         </div>
@@ -113,7 +113,7 @@
                         <div>
                             You'll notice 2 things of interest:
                             <ol>
-                                <li>The connected screen will display some similar to:<pre>Started
+                                <li>The connected screen will display something similar to:<pre>Started
 01/01/1970 00:02
 0.0.0.0</pre></li>
                                 <li>The log entry in the Output tab of Visual Studio will log an incorrect date</li>
@@ -144,7 +144,7 @@
                             <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">WifiNetworkHelper</span></span>
                             that exposes a static method named
                             <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
-                            which we can use to connect to the WiFi network. The method takes 2 paramaters:
+                            which we can use to connect to the WiFi network. The method takes 2 parameters:
                             <ul>
                                 <li>The SSID (<code>introtomessaging</code>)</li>
                                 <li>The password for the WiFi network (<code>IsY2TPxx0TI9</code>)</li>
@@ -170,6 +170,21 @@
                         </div>
                         <div>
                             🎉👏
+                        </div>
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <div>
+                                In this exercise, you:
+                                <ul>
+                                    <li>Successfully deployed your first application to an ESP32 device using Visual Studio</li>
+                                    <li>Displayed output on the OLED screen from your application</li>
+                                    <li>Learned how to connect a NanoFramework device to WiFi</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            This may seem like a small first step, but it's a powerful one: <strong>You've now got a live device that can
+                            communicate with the outside world.</strong> That's the heart of any distributed system.
                         </div>
                         <div>
                             If you're done early, why not try some of the Bonus Exercises?
@@ -237,7 +252,7 @@
                             If you look at the OLED screen connected to your device, You'll notice something:
                         </div>
                         <div>
-                            The connected screen will display some similar to:<pre>Started
+                            The connected screen will display something similar to:<pre>Started
 01/01/1970 00:02
 0.0.0.0</pre>
                             In fact, you might recognise the date (01/01/1970) as one of the typical Epoch dates.
@@ -266,7 +281,7 @@
                             <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#066555;">WifiNetworkHelper</span></span>
                             that exposes a static method named
                             <span style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:#74531f;">ConnectDhcp</span></span>
-                            which we can use to connect to the WiFi network. The method takes 2 paramaters:
+                            which we can use to connect to the WiFi network. The method takes 2 parameters:
                             <ul>
                                 <li>The SSID (<code>introtomessaging</code>)</li>
                                 <li>The password for the WiFi network (<code>IsY2TPxx0TI9</code>)</li>
@@ -293,6 +308,21 @@
                         <div>
                             🎉👏
                         </div>
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What We Learnt</h3>
+                            <div>
+                                In this exercise, you:
+                                <ul>
+                                    <li>Successfully deployed your first application to an ESP32 device using VS Code</li>
+                                    <li>Displayed output on the OLED screen from your application</li>
+                                    <li>Learned how to connect a NanoFramework device to WiFi</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            This may seem like a small first step, but it's a powerful one: <strong>You've now got a live device that can
+                            communicate with the outside world.</strong> That's the heart of any distributed system.
+                        </div>
                         <div>
                             If you're done early, why not try some of the Bonus Exercises?
                         </div>
@@ -305,7 +335,12 @@
                             Done already? Waiting for everyone else to finish? Why not tackle some of these bonus challenges?
                         </div>
 
-                        <h3 class="breadcrumb">1. Scan for available all WiFi networks</h3>
+                        <h3 class="breadcrumb">1. Display the current UTC time</h3>
+                        <div>
+                            Now that we have a date and time, let's update the date on the screen every minute.
+                        </div>
+
+                        <h3 class="breadcrumb">2. Scan for all available WiFi networks</h3>
                         <div>
                             Use the ESP32's Wi-Fi radio to scan for nearby wireless networks and show the results on the OLED. This could be as simple as displaying
                             the number of networks found or cycling through a few network names and signal strengths on the screen.
@@ -317,7 +352,7 @@
                             🔎 Tip: The starting point will be to use the <code>WifiAdapter wifi = WifiAdapter.FindAllAdapters()[0]</code> wifi adapter
                         </div>
 
-                        <h3 class="breadcrumb">2. Implement a marquee on the OLED screen</h3>
+                        <h3 class="breadcrumb">3. Implement a marquee on the OLED screen</h3>
                         <div>
                             The OLED screen can only show a little information. If you want to display text longer than a few characters, you'll have to implement
                             scrolling on the screen.

@@ -37,7 +37,7 @@
                                 <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/">Code Repo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/exercises/solutions">Solutions</a>
+                                <a class="nav-link" href="https://github.com/WilliamBZA/1DayDistributedSystemsThroughPlay/tree/main/solutions">Solutions</a>
                             </li>
                         </ul>
                     </div>
@@ -247,6 +247,22 @@
                         <div>
                             <strong>Tune It Based on Real-World Behavior</strong>
                         </div>
+                        <div class="learned-box">
+                            <h3 class="breadcrumb">What did we learn?</h3>
+                            <div>
+                                Timeouts can be sneaky: everything looks fine until a message quietly slips through the cracks (or shows up twice 😬).
+                                In this exercise, you got to see:
+                                <ul>
+                                    <li>The difference between <code>ReceiveAndDelete</code> and <code>PeekLock</code>, and when each one makes sense.</li>
+                                    <li>What actually happens when your handler takes too long (the message can get picked up again).</li>
+                                    <li>Why lock timeouts can cause duplicate processing or other weird bugs.</li>
+                                    <li>How to keep the message lock alive while your code is still working on it using <code>MaxAutoLockRenewalDuration</code>.</li>
+                                    <li>Why it's better to tune that timeout based on real-life performance, not just vibes.</li>
+                                </ul>
+                                Hopefully, you've now got a good sense of how to stop long-running messages from causing chaos in your system.
+                            </div>
+                        </div>
+                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">
