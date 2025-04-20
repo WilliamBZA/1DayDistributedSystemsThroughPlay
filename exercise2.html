@@ -68,8 +68,8 @@
                         <h3>Turning a LED on/off</h3>
 
                         <div>
-                            One of the aims of this workshop is to use escape room devices to teach distributed system concepts. Before we can get too involved with
-                            distributed systems techniques, we first need to learn how to interact with some of the escape room devices.
+                            One of the aims of this workshop is to use escape room devices to teach distributed system concepts.  But before we jump
+                            into distributed systems, let's get comfortable controlling the hardware; starting with something simple and satisfying: blinking lights.
                         </div>
                         <div>
                             To do this, we're going to start with turning a simple LED on and off. 
@@ -103,6 +103,9 @@
                         <div>
                             Your first exercise is to turn the Red LED on when the device starts up.
                         </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Write code that turns the Red LED on as soon as the device starts up.
+                        </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Toggle the Red and Blue LEDs every second</h3>
                         <div>
@@ -119,6 +122,13 @@
                         </div>
                         <div class="note">
                             🔎 Hint: You can use <code>Thread.Sleep(1000)</code> to wait 1 second
+                        </div>
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Use the same <code>GpioController</code> from step 1 to turn on the Blue LED.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Update your code so that turning on the Blue LED turns off the Red LED, and vice versa.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Toggle between the Red and Blue LEDs every second so they alternate.</li>
+                            </ul>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step3">3. Toggle the LEDs when a button is pushed</h3>
@@ -145,8 +155,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">$&quot;</span>{<span style="color:#066555;">DateTime</span>.UtcNow}<span style="color:#a31515;">&nbsp;-&nbsp;Button&nbsp;Pushed</span><span style="color:#a31515;">&quot;</span>);
 };</pre>
                         </div>
-                        <div>
-                            Use the <code>ValueChanged</code> callback to toggle the state of the LEDs when the button is pushed.
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Subscribe to the button's <code>ValueChanged</code> event and toggle the LEDs when it’s pressed.
                         </div>
 
                         <div class="learned-box">

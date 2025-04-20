@@ -20,7 +20,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Exercises</a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="exercise1.html">Exercise 1 - Intro to NanoFramework</a></li>
+                                    <li><a class="dropdown-item" href="index.html">Exercise 1 - Intro to NanoFramework</a></li>
                                     <li><a class="dropdown-item" href="exercise2.html">Exercise 2 - Turning devices on/off</a></li>
                                     <li><a class="dropdown-item" href="exercise3.html">Exercise 3 - Responding to HTTP requests</a></li>
                                     <li><a class="dropdown-item" href="exercise4.html">Exercise 4 - Intro to Azure Service Bus</a></li>
@@ -89,7 +89,7 @@
                             <code>scheduledEnqueueTime</code> to a future <code>DateTimeOffset</code>.
                         </div>
                         <div>
-                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">futureTime</span>&nbsp;=&nbsp;<span style="color:#066555;">DateTimeOffset</span>.UtcNow.<span style="color:#74531f;">AddMinutes</span>(5);
+                            <pre style="font-family:Cascadia Mono;font-size:13px;color:black;background:white;"><span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">futureTime</span>&nbsp;=&nbsp;<span style="color:#066555;">DateTimeOffset</span>.UtcNow.<span style="color:#74531f;">AddMinutes</span>(1);
 <span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">message</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#066555;">ServiceBusMessage</span>(<span style="color:#a31515;">&quot;This&nbsp;is&nbsp;a&nbsp;scheduled&nbsp;message&quot;</span>);
 
 <span style="color:#8f08c4;">await</span>&nbsp;<span style="color:#1f377f;">sender</span>.<span style="color:#74531f;">ScheduleMessageAsync</span>(<span style="color:#1f377f;">message</span>,&nbsp;<span style="color:#1f377f;">futureTime</span>);
@@ -97,6 +97,9 @@
                         </div>
                         <div>
                             The message will now be enqueued at the time you specified. Until then, it's held by Azure Service Bus and won't be delivered to any receiver.
+                        </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Schedule a message 1 minute in the future and verify it's only processed after that time.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Observe how scheduled delivery affects processing</h3>
@@ -116,6 +119,9 @@
                         </div>
                         <div>
                             Run your receiver and notice the gaps between messages arriving.
+                        </div>
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Schedule 5 messages, each delayed by an additional 10 seconds. Log the receive time of each to confirm spacing.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step3">3. Using scheduled messages for delayed retries</h3>
@@ -143,6 +149,10 @@
                             but a copy.
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Simulate a failure in your handler, then reschedule the message with a 1-minute delay for retry.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step4">4. Why Not Just Use Polly's WaitAndRetry?</h3>
                         <div>
                             You might be wondering: can't I just use Polly's <code>WaitAndRetry</code> to delay retries? And you can, but there's a catch...
@@ -163,6 +173,10 @@
                         </div>
                         <div>
                             Run your application and see how it behaves. What are the other messages doing while the processor is waiting for the retries?
+                        </div>
+
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Change your processor to have <code>MaxConcurrentCalls = 1</code> and use Polly’s <code>WaitAndRetry</code> with long delays. Observe how it affects throughput.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. Change your processor to use scheduled messages for delayed retries</h3>
@@ -188,6 +202,11 @@
                             When using scheduled messages instead of Polly's <code>WaitAndRetry</code> policy, you should see that the message that always fails is moved back to the
                             queue after it's immediate retries. While it's waiting for it's schedule to elapse, the other messages in the queue can be processed.
                         </div>
+
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Replace the <code>WaitAndRetry</code> retries with scheduled messages. Observe how other messages continue to be processed while failed ones are rescheduled.
+                        </div>
+
                         <div class="learned-box">
                             <h3 class="breadcrumb">What we learned</h3>
                             <div>

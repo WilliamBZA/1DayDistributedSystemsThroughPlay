@@ -122,6 +122,12 @@
                             At this point, both Console Applications can receive messages, but they are still independent. In the next steps, we will modify this so they
                             both receive the messages when the LEDs are toggled.
                         </div>
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Create a second Console Application and a new queue in Azure Service Bus.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Make the Second Console Application receive messages from the new queue.</li>
+                            </ul>
+                        </div>
 
                         <h3 class="breadcrumb" id="vs-step2">2. Send the Message to both queues</h3>
                         <div>
@@ -228,6 +234,10 @@
                             That's exactly what <strong>Topics and Subscriptions</strong> are for.
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Update your sender to send the same message to both queues.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step3">3. Use a Transaction to send to multiple queues atomically</h3>
                         <div>
                             In Step 2, you saw that sending to multiple queues separately can lead to inconsistent state if one send fails.
@@ -293,6 +303,10 @@
 <span style="color:#066555;">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#a31515;">&quot;Message&nbsp;sent&nbsp;to&nbsp;both&nbsp;queues!&quot;</span>);</pre>
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Modify your sender code to wrap both sends in a transaction using <code>TransactionScope</code> to make the send atomic.
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step4">4. Add a Topic to Azure Service Bus</h3>
                         <div>
                             Instead of a queue, we will now use a Topic. Topics allow multiple subscribers to receive the same message, enabling a publish-subscribe pattern.
@@ -310,6 +324,10 @@
                         </div>
                         <div>
                             So let's bind the queues to that topic...
+                        </div>
+
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Create a Topic in Azure Service Bus using the Azure Portal.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. Bind both queues to the Topic</h3>
@@ -344,6 +362,10 @@
                                 </li>
                                 <li>Verify that both queues are now listed under Subscriptions for the topic.</li>
                             </ol>
+                        </div>
+
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Create two Subscriptions for your Topic, each forwarding to one of the two queues.
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step6">6. Send the message to the Topic only</h3>
@@ -400,6 +422,13 @@
                                 <li>
                                     <strong>Decoupling</strong>. The sender doesn't know anything about who is going to receive the message. There can be no coupling from the sender to the recipients.
                                 </li>
+                            </ul>
+                        </div>
+
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Update your sender to send a message only to the Topic.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Verify that both queues receive it.</li>
                             </ul>
                         </div>
 

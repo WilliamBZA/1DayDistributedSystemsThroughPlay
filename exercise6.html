@@ -172,6 +172,13 @@
 </pre>
                         </div>
 
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Install the <code>Polly</code> NuGet package and set up a basic Retry policy that retries 3 times on any exception.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Wrap your message handler with a Polly <code>RetryPolicy</code> that logs each attempt and retries immediately up to 3 times.</li>
+                            </ul>
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step2">2. Temporary, but not exactly transient errors</h3>
                         <div>
                             Sometimes errors persist longer than just a moment. In these cases, immediate retries won't help, but waiting a little bit longer might be enough to work.
@@ -237,6 +244,14 @@
 </pre>
                         </div>
 
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Use Polly's <code>WaitAndRetry</code> policy to retry failed message handling with exponential backoff (2s, 4s, 8s).</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Chain your Polly policies together: retry immediately 3 times, then wait-and-retry 3 more times with exponential backoff.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Simulate a handler that fails for the first 5 seconds, and validate that Polly eventually succeeds after retrying.</li>
+                            </ul>
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step3">3. Poison messages</h3>
                         <div>
                             Some messages simply cannot be processed no matter how many times you try or how long you wait. These are often called "poison messages."
@@ -294,6 +309,10 @@
                             </ol>
                         </div>
 
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Add a <code>Fallback</code> to your Polly policy chain that moves failed messages to the Dead-Letter Queue after all retries fail.
+                        </div>
+
                         <div class="learned-box">
                             <h3 class="breadcrumb">What We Learnt</h3>
                             <div>
@@ -309,7 +328,6 @@
                                 </p>
                             </div>
                         </div>
-                        
                     </div>
 
                     <div class="tab-pane" id="bonus-exercise-tab-content" rold="tabpanel" aria-labelledby="bonusexercise-tab" tabindex="2">

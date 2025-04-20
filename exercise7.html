@@ -143,6 +143,13 @@
                             Don't worry... we're about to make it faster.
                         </div>
 
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Add a stopwatch to your current code using <code>ReceiveMessageAsync</code>. Send and process 100 messages. Record how long it takes.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Refactor your receiver to use <code>ServiceBusProcessor</code> and repeat the stopwatch timing with 100 messages. Compare the difference.</li>
+                            </ul>
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step2">2. Increase Message Concurrency</h3>
                         <div>
                             The Azure SDK has a default concurrency of 1 when receiving messages. This means that by default, your message processor handles <strong>one</strong>
@@ -182,6 +189,13 @@
                             Even better if you track CPU usage and memory too!
                         </div>
 
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Set <code>MaxConcurrentCalls</code> to 10 and measure the performance difference.</li>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Set <code>MaxConcurrentCalls</code> to other values like 5, 20, and 100. Observe how message throughput changes at each level.</li>
+                            </ul>
+                        </div>
+
                         <h3 class="breadcrumb" id="vs-step3">3. Prefetching</h3>
                         <div>
                             Every time your app fetches a message from Azure Service Bus, it makes a network call. That doesn't take long, but if you're
@@ -200,6 +214,12 @@
                             <strong>Choosing a good value:</strong> Try setting it to 2-4 times your concurrency. So if you're using <code>MaxConcurrentCalls = 10</code>,
                             go for a prefetch count of 20 to 40. Then, experiment. If memory usage looks good and processing is snappy, you're in a good spot. If
                             things slow down or you're seeing lock timeouts, it might be too hig
+                        </div>
+
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Add a <code>PrefetchCount</code> setting to your <code>ServiceBusProcessorOptions</code>. Try values like 20, 40, and 100 and see what the impact is.</li>
+                            </ul>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step4">4. Batching</h3>
@@ -230,6 +250,12 @@
                         <div>
                             Try changing your console application that generates 100 messages to use batches. Is there a noticable difference in how long
                             it takes to send 100 messages?
+                        </div>
+
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Use <code>CreateMessageBatchAsync</code> to batch your 100 messages before sending them. See how batching affects send time.</li>
+                            </ul>
                         </div>
 
                         <h3 class="breadcrumb" id="vs-step5">5. Serialization and Deserialization</h3>
@@ -309,6 +335,12 @@
                             Change your code to be able to support either XML messages or JSON messages.
                         </div>
 
+                        <div class="task-callout">
+                            <ul>
+                                <li><strong><input type="checkbox" /> Your Task:</strong> Modify your receiver to support both JSON and XML based on the message <code>ContentType</code>. Log a different message for each format.</li>
+                            </ul>
+                        </div>
+
                         <h3 class="breadcrumb">6. Dealing with different message types</h3>
                         <div>
                             Often, different message types will be sent through the same topic or queue (e.g., <code>OrderCreated</code>,
@@ -360,6 +392,10 @@
     }</pre>
                         <div>
                             Then change your sender to send both of these message types and make sure that your deserialization works as expected.
+                        </div>
+
+                        <div class="task-callout">
+                            <strong><input type="checkbox" /> Your Task:</strong> Add a <code>MessageType</code> header to each message using <code>ApplicationProperties</code>. Use this to deserialize the correct class on the receiving end.
                         </div>
 
                         <div class="learned-box">
