@@ -70,7 +70,7 @@
                 <div class="tab-content" id="exerciseContent">
                     <div class="tab-pane show active" id="gpio-tab-content" role="tabpanel" aria-labelledby="gpio-tab" tabindex="0">
                         <div>
-                            What we looked at in the previous exercise was how to Send Commands. Commands have specific intent. They are an instruction to do something
+                            What we looked at in the previous exercise was how to Send Commands. <strong>Commands</strong> have specific intent. They are an instruction to do something
                             specific. Examples of commands are:
                         </div>
                         <div>
@@ -85,6 +85,9 @@
                             A trait that Commands have is that they are processed by a single, logical processor. A <code>ChargeCreditCard</code> command always goes
                             to the <i>same</i> logical processor. In terms of our previous exercise, the <code>ChargeCreditCard</code> Command always goes to the same Queue.
                         </div>
+                        <div>
+                            <img src="img/commands.png" />
+                        </div>
 
                         <div>
                             The converse to Commands are <strong>Events</strong>.
@@ -97,6 +100,10 @@
 
                         <div>
                             In terms of our last example: An Event is sent by a single processor, but it can go to multiple other queues.
+                        </div>
+
+                        <div>
+                            <img src="img/events.png" />
                         </div>
 
                         <div>
